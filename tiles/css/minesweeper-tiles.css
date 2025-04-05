@@ -1,0 +1,226 @@
+:root {
+  /* Base colors */
+  --unplayed-color: #4a90e2;        /* Blue for unplayed tiles */
+  --revealed-color: #C0C0C0;         /* Gray for revealed tiles */
+  --border-color: #2c3e50;           /* Dark blue for borders */
+  --highlight-color: #ffffff;        /* White for highlights */
+  --shadow-color: #2c3e50;           /* Dark blue for shadows */
+  
+  /* Number colors (following standard minesweeper colors) */
+  --number-1-color: #0000FF;         /* Blue */
+  --number-2-color: #008000;         /* Green */
+  --number-3-color: #FF0000;         /* Red */
+  --number-4-color: #000080;         /* Dark Blue */
+  --number-5-color: #800000;         /* Dark Red */
+  --number-6-color: #008080;         /* Teal */
+  --number-7-color: #000000;         /* Black */
+  --number-8-color: #808080;         /* Gray */
+  
+  /* Special states */
+  --mine-color: #000000;             /* Black for mines */
+  --flag-color: #FF0000;             /* Red for flags */
+  --wrong-guess-color: #FF0000;      /* Red for wrong guesses */
+  
+  /* Dimensions */
+  --tile-size: 150px;                /* Size of the tile */
+  --border-width: 1px;               /* Border width */
+  --highlight-width: 2px;            /* Highlight line width */
+  
+  /* Effects */
+  --shadow-opacity: 0.8;             /* Opacity for shadows */
+  --highlight-opacity: 0.7;          /* Opacity for highlights */
+  --inner-shadow-blur: 1;            /* Blur for inner shadows */
+  --inner-shadow-offset: 2;          /* Offset for inner shadows */
+}
+
+.tile-container {
+  background-color: var(--revealed-color);
+  padding: 10px;
+  display: inline-block;
+  border-radius: 5px;
+  overflow: visible;
+}
+
+.minesweeper-tile {
+  display: inline-block;
+  margin: 0;
+  width: var(--tile-size);
+  height: var(--tile-size);
+}
+
+/* Tile state classes for static usage */
+.tile-unplayed .unplayed-tile { display: block; }
+.tile-unplayed .revealed-tile,
+.tile-unplayed .number,
+.tile-unplayed .mine,
+.tile-unplayed .flag,
+.tile-unplayed .wrong-guess { display: none; }
+
+.tile-pressed .pressed-tile { display: block; }
+.tile-pressed .unplayed-tile,
+.tile-pressed .number,
+.tile-pressed .mine,
+.tile-pressed .flag,
+.tile-pressed .wrong-guess { display: none; }
+
+.tile-flagged .unplayed-tile,
+.tile-flagged .flag { display: block; }
+.tile-flagged .revealed-tile,
+.tile-flagged .number,
+.tile-flagged .mine,
+.tile-flagged .wrong-guess { display: none; }
+
+.tile-revealed-mine .revealed-tile,
+.tile-revealed-mine .mine { display: block; }
+.tile-revealed-mine .unplayed-tile,
+.tile-revealed-mine .number,
+.tile-revealed-mine .flag,
+.tile-revealed-mine .wrong-guess { display: none; }
+
+.tile-wrong-guess .revealed-tile,
+.tile-wrong-guess .wrong-guess { display: block; }
+.tile-wrong-guess .unplayed-tile,
+.tile-wrong-guess .number,
+.tile-wrong-guess .mine,
+.tile-wrong-guess .flag { display: none; }
+
+.tile-neighbor-0 .revealed-tile { display: block; }
+.tile-neighbor-0 .unplayed-tile,
+.tile-neighbor-0 .number,
+.tile-neighbor-0 .mine,
+.tile-neighbor-0 .flag,
+.tile-neighbor-0 .wrong-guess { display: none; }
+
+.tile-neighbor-1 .revealed-tile,
+.tile-neighbor-1 .number-1 { display: block; }
+.tile-neighbor-1 .unplayed-tile,
+.tile-neighbor-1 .number-2,
+.tile-neighbor-1 .number-3,
+.tile-neighbor-1 .number-4,
+.tile-neighbor-1 .number-5,
+.tile-neighbor-1 .number-6,
+.tile-neighbor-1 .number-7,
+.tile-neighbor-1 .number-8,
+.tile-neighbor-1 .mine,
+.tile-neighbor-1 .flag,
+.tile-neighbor-1 .wrong-guess { display: none; }
+
+.tile-neighbor-2 .revealed-tile,
+.tile-neighbor-2 .number-2 { display: block; }
+.tile-neighbor-2 .unplayed-tile,
+.tile-neighbor-2 .number-1,
+.tile-neighbor-2 .number-3,
+.tile-neighbor-2 .number-4,
+.tile-neighbor-2 .number-5,
+.tile-neighbor-2 .number-6,
+.tile-neighbor-2 .number-7,
+.tile-neighbor-2 .number-8,
+.tile-neighbor-2 .mine,
+.tile-neighbor-2 .flag,
+.tile-neighbor-2 .wrong-guess { display: none; }
+
+.tile-neighbor-3 .revealed-tile,
+.tile-neighbor-3 .number-3 { display: block; }
+.tile-neighbor-3 .unplayed-tile,
+.tile-neighbor-3 .number-1,
+.tile-neighbor-3 .number-2,
+.tile-neighbor-3 .number-4,
+.tile-neighbor-3 .number-5,
+.tile-neighbor-3 .number-6,
+.tile-neighbor-3 .number-7,
+.tile-neighbor-3 .number-8,
+.tile-neighbor-3 .mine,
+.tile-neighbor-3 .flag,
+.tile-neighbor-3 .wrong-guess { display: none; }
+
+.tile-neighbor-4 .revealed-tile,
+.tile-neighbor-4 .number-4 { display: block; }
+.tile-neighbor-4 .unplayed-tile,
+.tile-neighbor-4 .number-1,
+.tile-neighbor-4 .number-2,
+.tile-neighbor-4 .number-3,
+.tile-neighbor-4 .number-5,
+.tile-neighbor-4 .number-6,
+.tile-neighbor-4 .number-7,
+.tile-neighbor-4 .number-8,
+.tile-neighbor-4 .mine,
+.tile-neighbor-4 .flag,
+.tile-neighbor-4 .wrong-guess { display: none; }
+
+.tile-neighbor-5 .revealed-tile,
+.tile-neighbor-5 .number-5 { display: block; }
+.tile-neighbor-5 .unplayed-tile,
+.tile-neighbor-5 .number-1,
+.tile-neighbor-5 .number-2,
+.tile-neighbor-5 .number-3,
+.tile-neighbor-5 .number-4,
+.tile-neighbor-5 .number-6,
+.tile-neighbor-5 .number-7,
+.tile-neighbor-5 .number-8,
+.tile-neighbor-5 .mine,
+.tile-neighbor-5 .flag,
+.tile-neighbor-5 .wrong-guess { display: none; }
+
+.tile-neighbor-6 .revealed-tile,
+.tile-neighbor-6 .number-6 { display: block; }
+.tile-neighbor-6 .unplayed-tile,
+.tile-neighbor-6 .number-1,
+.tile-neighbor-6 .number-2,
+.tile-neighbor-6 .number-3,
+.tile-neighbor-6 .number-4,
+.tile-neighbor-6 .number-5,
+.tile-neighbor-6 .number-7,
+.tile-neighbor-6 .number-8,
+.tile-neighbor-6 .mine,
+.tile-neighbor-6 .flag,
+.tile-neighbor-6 .wrong-guess { display: none; }
+
+.tile-neighbor-7 .revealed-tile,
+.tile-neighbor-7 .number-7 { display: block; }
+.tile-neighbor-7 .unplayed-tile,
+.tile-neighbor-7 .number-1,
+.tile-neighbor-7 .number-2,
+.tile-neighbor-7 .number-3,
+.tile-neighbor-7 .number-4,
+.tile-neighbor-7 .number-5,
+.tile-neighbor-7 .number-6,
+.tile-neighbor-7 .number-8,
+.tile-neighbor-7 .mine,
+.tile-neighbor-7 .flag,
+.tile-neighbor-7 .wrong-guess { display: none; }
+
+.tile-neighbor-8 .revealed-tile,
+.tile-neighbor-8 .number-8 { display: block; }
+.tile-neighbor-8 .unplayed-tile,
+.tile-neighbor-8 .number-1,
+.tile-neighbor-8 .number-2,
+.tile-neighbor-8 .number-3,
+.tile-neighbor-8 .number-4,
+.tile-neighbor-8 .number-5,
+.tile-neighbor-8 .number-6,
+.tile-neighbor-8 .number-7,
+.tile-neighbor-8 .mine,
+.tile-neighbor-8 .flag,
+.tile-neighbor-8 .wrong-guess { display: none; }
+
+/* Number colors */
+.number-1 { fill: var(--number-1-color); }
+.number-2 { fill: var(--number-2-color); }
+.number-3 { fill: var(--number-3-color); }
+.number-4 { fill: var(--number-4-color); }
+.number-5 { fill: var(--number-5-color); }
+.number-6 { fill: var(--number-6-color); }
+.number-7 { fill: var(--number-7-color); }
+.number-8 { fill: var(--number-8-color); }
+
+/* Special elements */
+.mine { fill: var(--mine-color); }
+.flag-pole { fill: var(--border-color); }
+.flag { fill: var(--flag-color); }
+.wrong-guess { fill: var(--wrong-guess-color); }
+
+/* Inner shadow effect */
+.inner-shadow-enabled .unplayed-tile,
+.inner-shadow-enabled .pressed-tile {
+  filter: url(#innerShadow);
+}

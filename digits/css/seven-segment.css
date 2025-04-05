@@ -1,0 +1,88 @@
+:root {
+  --background-color: #000000;
+  --foreground-color: #ff0000;
+  --opacity-offsegment: 0.15;
+  --glow-intensity: 1;
+  --segment-width: 50px;
+  --segment-height: 100px;
+  --edge-radius: 5;
+}
+
+.seven-segment-container {
+  background-color: var(--background-color);
+  padding: 10px;
+  display: inline-block;
+  border-radius: calc(var(--edge-radius) * 1px);
+  overflow: visible;
+}
+
+.seven-segment {
+  display: inline-block;
+  margin: 0 2px;
+  width: var(--segment-width);
+  height: var(--segment-height);
+}
+
+.background {
+  fill: var(--background-color);
+}
+
+.segment {
+  fill: var(--foreground-color);
+  transition: opacity 0.2s ease;
+}
+
+.segment.off {
+  opacity: var(--opacity-offsegment);
+}
+
+.segment.on {
+  opacity: 1;
+}
+
+.glow-enabled .segment.on {
+  filter: url(#glow);
+}
+
+/* Digit-specific classes for static usage */
+.digit-blank .segment { opacity: var(--opacity-offsegment); }
+
+.digit-0 .segment.a, .digit-0 .segment.b, .digit-0 .segment.c, 
+.digit-0 .segment.d, .digit-0 .segment.e, .digit-0 .segment.f { opacity: 1; }
+.digit-0 .segment.g { opacity: var(--opacity-offsegment); }
+
+.digit-1 .segment.b, .digit-1 .segment.c { opacity: 1; }
+.digit-1 .segment.a, .digit-1 .segment.d, .digit-1 .segment.e, 
+.digit-1 .segment.f, .digit-1 .segment.g { opacity: var(--opacity-offsegment); }
+
+.digit-2 .segment.a, .digit-2 .segment.b, .digit-2 .segment.g, 
+.digit-2 .segment.e, .digit-2 .segment.d { opacity: 1; }
+.digit-2 .segment.c, .digit-2 .segment.f { opacity: var(--opacity-offsegment); }
+
+.digit-3 .segment.a, .digit-3 .segment.b, .digit-3 .segment.g, 
+.digit-3 .segment.c, .digit-3 .segment.d { opacity: 1; }
+.digit-3 .segment.e, .digit-3 .segment.f { opacity: var(--opacity-offsegment); }
+
+.digit-4 .segment.f, .digit-4 .segment.g, .digit-4 .segment.b, 
+.digit-4 .segment.c { opacity: 1; }
+.digit-4 .segment.a, .digit-4 .segment.d, .digit-4 .segment.e { opacity: var(--opacity-offsegment); }
+
+.digit-5 .segment.a, .digit-5 .segment.f, .digit-5 .segment.g, 
+.digit-5 .segment.c, .digit-5 .segment.d { opacity: 1; }
+.digit-5 .segment.b, .digit-5 .segment.e { opacity: var(--opacity-offsegment); }
+
+.digit-6 .segment.a, .digit-6 .segment.f, .digit-6 .segment.g, 
+.digit-6 .segment.e, .digit-6 .segment.c, .digit-6 .segment.d { opacity: 1; }
+.digit-6 .segment.b { opacity: var(--opacity-offsegment); }
+
+.digit-7 .segment.a, .digit-7 .segment.b, .digit-7 .segment.c { opacity: 1; }
+.digit-7 .segment.d, .digit-7 .segment.e, .digit-7 .segment.f, 
+.digit-7 .segment.g { opacity: var(--opacity-offsegment); }
+
+.digit-8 .segment.a, .digit-8 .segment.b, .digit-8 .segment.c, 
+.digit-8 .segment.d, .digit-8 .segment.e, .digit-8 .segment.f, 
+.digit-8 .segment.g { opacity: 1; }
+
+.digit-9 .segment.a, .digit-9 .segment.b, .digit-9 .segment.f, 
+.digit-9 .segment.g, .digit-9 .segment.c, .digit-9 .segment.d { opacity: 1; }
+.digit-9 .segment.e { opacity: var(--opacity-offsegment); }

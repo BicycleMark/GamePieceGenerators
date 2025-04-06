@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test All Minesweeper Tile States</title>
+  <link rel="stylesheet" href="css/minesweeper-tiles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .tile-container {
+      text-align: center;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+    
+    .tile-label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test All Minesweeper Tile States</h1>
+  
+  <div class="tile-grid">
+    <div class="tile-container">
+      <svg id="unplayed-tile" class="minesweeper-tile tile-unplayed" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Unplayed</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="pressed-tile" class="minesweeper-tile tile-pressed" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Pressed</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="flagged-tile" class="minesweeper-tile tile-flagged" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Flagged</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="revealed_mine-tile" class="minesweeper-tile tile-revealed_mine" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Revealed Mine</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="wrong_guess-tile" class="minesweeper-tile tile-wrong_guess" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Wrong Guess</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_0-tile" class="minesweeper-tile tile-neighbor_0" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Empty (0)</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_1-tile" class="minesweeper-tile tile-neighbor_1" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 1</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_2-tile" class="minesweeper-tile tile-neighbor_2" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 2</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_3-tile" class="minesweeper-tile tile-neighbor_3" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 3</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_4-tile" class="minesweeper-tile tile-neighbor_4" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 4</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_5-tile" class="minesweeper-tile tile-neighbor_5" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 5</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_6-tile" class="minesweeper-tile tile-neighbor_6" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 6</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_7-tile" class="minesweeper-tile tile-neighbor_7" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 7</div>
+    </div>
+    
+    <div class="tile-container">
+      <svg id="neighbor_8-tile" class="minesweeper-tile tile-neighbor_8" viewBox="0 0 100 100" width="150" height="150"></svg>
+      <div class="tile-label">Number 8</div>
+    </div>
+  </div>
+  
+  <script src="js/minesweeper-tiles.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all tiles
+      const tileIds = [
+        'unplayed-tile',
+        'pressed-tile',
+        'flagged-tile',
+        'revealed_mine-tile',
+        'wrong_guess-tile',
+        'neighbor_0-tile',
+        'neighbor_1-tile',
+        'neighbor_2-tile',
+        'neighbor_3-tile',
+        'neighbor_4-tile',
+        'neighbor_5-tile',
+        'neighbor_6-tile',
+        'neighbor_7-tile',
+        'neighbor_8-tile'
+      ];
+      
+      // Create a display for each tile
+      tileIds.forEach(id => {
+        const element = document.getElementById(id);
+        const display = new MinesweeperTileDisplay(element, {
+          tileSize: 150
+        });
+        
+        // Set the state based on the id
+        const state = id.replace('-tile', '');
+        display.setState(state);
+      });
+    });
+  </script>
+</body>
+</html>

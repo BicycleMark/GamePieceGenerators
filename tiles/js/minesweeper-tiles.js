@@ -80,7 +80,7 @@ class MinesweeperTileDisplay {
         <feGaussianBlur in="SourceAlpha" stdDeviation="${this.options.innerShadowBlur}" result="blur" />
         <feOffset dx="${this.options.innerShadowOffset}" dy="${this.options.innerShadowOffset}" />
         <feComposite in="SourceAlpha" in2="offsetblur" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="shadowDiff" />
-        <feFlood flood-color="${this.options.shadowColor}" result="shadowColor" />
+        <feFlood flood-color="${this.options.shadowColor}" flood-opacity="0.3" result="shadowColor" />
         <feComposite in="shadowColor" in2="shadowDiff" operator="in" result="shadow" />
         <feComposite in="shadow" in2="SourceGraphic" operator="over" />
       </filter>
@@ -117,6 +117,7 @@ class MinesweeperTileDisplay {
         rx="0"
         ry="0"
         fill="url(#buttonGradient)"
+        filter="url(#innerShadow)"
         stroke="${this.options.borderColor}"
         stroke-width="1"
       />
@@ -163,20 +164,61 @@ class MinesweeperTileDisplay {
     `;
     this.element.appendChild(unplayedTile);
     
-    // Create pressed tile (flat button)
+    // Create pressed tile (sunken button with swapped highlights/shadows)
     const pressedTile = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     pressedTile.setAttribute('class', 'pressed-tile');
     pressedTile.innerHTML = `
+      <!-- Same background as unplayed but slightly offset -->
       <rect
-        x="5"
-        y="5"
+        x="6"
+        y="6"
         width="90"
         height="90"
         rx="0"
         ry="0"
-        fill="${this.options.revealedColor}"
+        fill="url(#buttonGradient)"
         stroke="${this.options.borderColor}"
         stroke-width="1"
+      />
+      
+      <!-- Swapped: Top/Left now has shadows -->
+      <line
+        x1="8"
+        y1="8"
+        x2="94"
+        y2="8"
+        stroke="${this.options.shadowColor}"
+        stroke-width="2"
+        stroke-opacity="${this.options.shadowOpacity}"
+      />
+      <line
+        x1="8"
+        y1="8"
+        x2="8"
+        y2="94"
+        stroke="${this.options.shadowColor}"
+        stroke-width="2"
+        stroke-opacity="${this.options.shadowOpacity}"
+      />
+      
+      <!-- Swapped: Bottom/Right now has highlights -->
+      <line
+        x1="8"
+        y1="94"
+        x2="94"
+        y2="94"
+        stroke="${this.options.highlightColor}"
+        stroke-width="2"
+        stroke-opacity="${this.options.highlightOpacity}"
+      />
+      <line
+        x1="94"
+        y1="8"
+        x2="94"
+        y2="94"
+        stroke="${this.options.highlightColor}"
+        stroke-width="2"
+        stroke-opacity="${this.options.highlightOpacity}"
       />
     `;
     this.element.appendChild(pressedTile);
@@ -193,7 +235,7 @@ class MinesweeperTileDisplay {
         rx="0"
         ry="0"
         fill="${this.options.revealedColor}"
-        stroke="${this.options.borderColor}"
+        stroke="#000000"
         stroke-width="1"
       />
     `;
@@ -212,7 +254,7 @@ class MinesweeperTileDisplay {
           font-weight="bold"
           text-anchor="middle"
           dominant-baseline="central"
-          fill="var(--number-${i}-color)"
+          fill="${this.options[`number${i}Color`]}"
         >
           ${i}
         </text>
@@ -225,16 +267,16 @@ class MinesweeperTileDisplay {
     mineElement.setAttribute('class', 'mine');
     mineElement.innerHTML = `
       <!-- Mine Circle -->
-      <circle cx="50" cy="50" r="20" fill="${this.options.mineColor}" />
+      <circle cx="50" cy="50" r="18" fill="${this.options.mineColor}" />
       
       <!-- Mine Spikes -->
-      <line x1="50" y1="20" x2="50" y2="80" stroke="${this.options.mineColor}" stroke-width="5" />
-      <line x1="20" y1="50" x2="80" y2="50" stroke="${this.options.mineColor}" stroke-width="5" />
-      <line x1="29" y1="29" x2="71" y2="71" stroke="${this.options.mineColor}" stroke-width="5" />
-      <line x1="29" y1="71" x2="71" y2="29" stroke="${this.options.mineColor}" stroke-width="5" />
+      <line x1="25" y1="50" x2="75" y2="50" stroke="${this.options.mineColor}" stroke-width="4" stroke-linecap="round" />
+      <line x1="50" y1="25" x2="50" y2="75" stroke="${this.options.mineColor}" stroke-width="4" stroke-linecap="round" />
+      <line x1="33" y1="33" x2="67" y2="67" stroke="${this.options.mineColor}" stroke-width="4" stroke-linecap="round" />
+      <line x1="67" y1="33" x2="33" y2="67" stroke="${this.options.mineColor}" stroke-width="4" stroke-linecap="round" />
       
       <!-- Mine Highlight -->
-      <circle cx="43" cy="43" r="5" fill="#ffffff" />
+      <circle cx="42" cy="42" r="6" fill="#FFFFFF" />
     `;
     this.element.appendChild(mineElement);
     
@@ -273,8 +315,8 @@ class MinesweeperTileDisplay {
     const wrongGuessElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     wrongGuessElement.setAttribute('class', 'wrong-guess');
     wrongGuessElement.innerHTML = `
-      <line x1="25" y1="25" x2="75" y2="75" stroke="${this.options.wrongGuessColor}" stroke-width="8" />
-      <line x1="75" y1="25" x2="25" y2="75" stroke="${this.options.wrongGuessColor}" stroke-width="8" />
+      <line x1="25" y1="25" x2="75" y2="75" stroke="${this.options.wrongGuessColor}" stroke-width="8" stroke-linecap="round" />
+      <line x1="75" y1="25" x2="25" y2="75" stroke="${this.options.wrongGuessColor}" stroke-width="8" stroke-linecap="round" />
     `;
     this.element.appendChild(wrongGuessElement);
   }
@@ -359,6 +401,7 @@ class MinesweeperTileDisplay {
       const flood = innerShadowFilter.querySelector('feFlood');
       if (flood) {
         flood.setAttribute('flood-color', this.options.shadowColor);
+        flood.setAttribute('flood-opacity', '0.3');
       }
     }
     
@@ -383,18 +426,12 @@ class MinesweeperTileDisplay {
       });
     }
     
-    // Update pressed and revealed tiles
-    const pressedTile = this.element.querySelector('.pressed-tile rect');
+    // Update revealed tiles (but not pressed - it has custom styling)
     const revealedTile = this.element.querySelector('.revealed-tile rect');
-    
-    if (pressedTile) {
-      pressedTile.setAttribute('fill', this.options.revealedColor);
-      pressedTile.setAttribute('stroke', this.options.borderColor);
-    }
     
     if (revealedTile) {
       revealedTile.setAttribute('fill', this.options.revealedColor);
-      revealedTile.setAttribute('stroke', this.options.borderColor);
+      revealedTile.setAttribute('stroke', '#000000');
     }
     
     // Update flag
@@ -520,17 +557,17 @@ class MinesweeperTileDisplay {
       .tile-unplayed .unplayed-tile { display: block; }
       .tile-pressed .pressed-tile { display: block; }
       .tile-flagged .unplayed-tile, .tile-flagged .flag { display: block; }
-      .tile-revealed-mine .revealed-tile, .tile-revealed-mine .mine { display: block; }
-      .tile-wrong-guess .revealed-tile, .tile-wrong-guess .wrong-guess { display: block; }
-      .tile-neighbor-0 .revealed-tile { display: block; }
-      .tile-neighbor-1 .revealed-tile, .tile-neighbor-1 .number-1 { display: block; }
-      .tile-neighbor-2 .revealed-tile, .tile-neighbor-2 .number-2 { display: block; }
-      .tile-neighbor-3 .revealed-tile, .tile-neighbor-3 .number-3 { display: block; }
-      .tile-neighbor-4 .revealed-tile, .tile-neighbor-4 .number-4 { display: block; }
-      .tile-neighbor-5 .revealed-tile, .tile-neighbor-5 .number-5 { display: block; }
-      .tile-neighbor-6 .revealed-tile, .tile-neighbor-6 .number-6 { display: block; }
-      .tile-neighbor-7 .revealed-tile, .tile-neighbor-7 .number-7 { display: block; }
-      .tile-neighbor-8 .revealed-tile, .tile-neighbor-8 .number-8 { display: block; }
+      .tile-revealed_mine .revealed-tile, .tile-revealed_mine .mine { display: block; }
+      .tile-wrong_guess .revealed-tile, .tile-wrong_guess .mine, .tile-wrong_guess .wrong-guess { display: block; }
+      .tile-neighbor_0 .revealed-tile { display: block; }
+      .tile-neighbor_1 .revealed-tile, .tile-neighbor_1 .number-1 { display: block; }
+      .tile-neighbor_2 .revealed-tile, .tile-neighbor_2 .number-2 { display: block; }
+      .tile-neighbor_3 .revealed-tile, .tile-neighbor_3 .number-3 { display: block; }
+      .tile-neighbor_4 .revealed-tile, .tile-neighbor_4 .number-4 { display: block; }
+      .tile-neighbor_5 .revealed-tile, .tile-neighbor_5 .number-5 { display: block; }
+      .tile-neighbor_6 .revealed-tile, .tile-neighbor_6 .number-6 { display: block; }
+      .tile-neighbor_7 .revealed-tile, .tile-neighbor_7 .number-7 { display: block; }
+      .tile-neighbor_8 .revealed-tile, .tile-neighbor_8 .number-8 { display: block; }
       
       .inner-shadow-enabled .unplayed-tile,
       .inner-shadow-enabled .pressed-tile {

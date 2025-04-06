@@ -48,160 +48,51 @@
   height: var(--tile-size);
 }
 
+/* Hide all elements by default */
+.unplayed-tile, .pressed-tile, .revealed-tile, .number, .mine, .flag, .wrong-guess {
+  display: none;
+}
+
 /* Tile state classes for static usage */
 .tile-unplayed .unplayed-tile { display: block; }
-.tile-unplayed .revealed-tile,
-.tile-unplayed .number,
-.tile-unplayed .mine,
-.tile-unplayed .flag,
-.tile-unplayed .wrong-guess { display: none; }
 
 .tile-pressed .pressed-tile { display: block; }
-.tile-pressed .unplayed-tile,
-.tile-pressed .number,
-.tile-pressed .mine,
-.tile-pressed .flag,
-.tile-pressed .wrong-guess { display: none; }
 
 .tile-flagged .unplayed-tile,
 .tile-flagged .flag { display: block; }
-.tile-flagged .revealed-tile,
-.tile-flagged .number,
-.tile-flagged .mine,
-.tile-flagged .wrong-guess { display: none; }
 
-.tile-revealed-mine .revealed-tile,
-.tile-revealed-mine .mine { display: block; }
-.tile-revealed-mine .unplayed-tile,
-.tile-revealed-mine .number,
-.tile-revealed-mine .flag,
-.tile-revealed-mine .wrong-guess { display: none; }
+.tile-revealed_mine .revealed-tile,
+.tile-revealed_mine .mine { display: block; }
 
-.tile-wrong-guess .revealed-tile,
-.tile-wrong-guess .wrong-guess { display: block; }
-.tile-wrong-guess .unplayed-tile,
-.tile-wrong-guess .number,
-.tile-wrong-guess .mine,
-.tile-wrong-guess .flag { display: none; }
+.tile-wrong_guess .revealed-tile,
+.tile-wrong_guess .mine,
+.tile-wrong_guess .wrong-guess { display: block; }
 
-.tile-neighbor-0 .revealed-tile { display: block; }
-.tile-neighbor-0 .unplayed-tile,
-.tile-neighbor-0 .number,
-.tile-neighbor-0 .mine,
-.tile-neighbor-0 .flag,
-.tile-neighbor-0 .wrong-guess { display: none; }
+.tile-neighbor_0 .revealed-tile { display: block; }
 
-.tile-neighbor-1 .revealed-tile,
-.tile-neighbor-1 .number-1 { display: block; }
-.tile-neighbor-1 .unplayed-tile,
-.tile-neighbor-1 .number-2,
-.tile-neighbor-1 .number-3,
-.tile-neighbor-1 .number-4,
-.tile-neighbor-1 .number-5,
-.tile-neighbor-1 .number-6,
-.tile-neighbor-1 .number-7,
-.tile-neighbor-1 .number-8,
-.tile-neighbor-1 .mine,
-.tile-neighbor-1 .flag,
-.tile-neighbor-1 .wrong-guess { display: none; }
+.tile-neighbor_1 .revealed-tile,
+.tile-neighbor_1 .number-1 { display: block; }
 
-.tile-neighbor-2 .revealed-tile,
-.tile-neighbor-2 .number-2 { display: block; }
-.tile-neighbor-2 .unplayed-tile,
-.tile-neighbor-2 .number-1,
-.tile-neighbor-2 .number-3,
-.tile-neighbor-2 .number-4,
-.tile-neighbor-2 .number-5,
-.tile-neighbor-2 .number-6,
-.tile-neighbor-2 .number-7,
-.tile-neighbor-2 .number-8,
-.tile-neighbor-2 .mine,
-.tile-neighbor-2 .flag,
-.tile-neighbor-2 .wrong-guess { display: none; }
+.tile-neighbor_2 .revealed-tile,
+.tile-neighbor_2 .number-2 { display: block; }
 
-.tile-neighbor-3 .revealed-tile,
-.tile-neighbor-3 .number-3 { display: block; }
-.tile-neighbor-3 .unplayed-tile,
-.tile-neighbor-3 .number-1,
-.tile-neighbor-3 .number-2,
-.tile-neighbor-3 .number-4,
-.tile-neighbor-3 .number-5,
-.tile-neighbor-3 .number-6,
-.tile-neighbor-3 .number-7,
-.tile-neighbor-3 .number-8,
-.tile-neighbor-3 .mine,
-.tile-neighbor-3 .flag,
-.tile-neighbor-3 .wrong-guess { display: none; }
+.tile-neighbor_3 .revealed-tile,
+.tile-neighbor_3 .number-3 { display: block; }
 
-.tile-neighbor-4 .revealed-tile,
-.tile-neighbor-4 .number-4 { display: block; }
-.tile-neighbor-4 .unplayed-tile,
-.tile-neighbor-4 .number-1,
-.tile-neighbor-4 .number-2,
-.tile-neighbor-4 .number-3,
-.tile-neighbor-4 .number-5,
-.tile-neighbor-4 .number-6,
-.tile-neighbor-4 .number-7,
-.tile-neighbor-4 .number-8,
-.tile-neighbor-4 .mine,
-.tile-neighbor-4 .flag,
-.tile-neighbor-4 .wrong-guess { display: none; }
+.tile-neighbor_4 .revealed-tile,
+.tile-neighbor_4 .number-4 { display: block; }
 
-.tile-neighbor-5 .revealed-tile,
-.tile-neighbor-5 .number-5 { display: block; }
-.tile-neighbor-5 .unplayed-tile,
-.tile-neighbor-5 .number-1,
-.tile-neighbor-5 .number-2,
-.tile-neighbor-5 .number-3,
-.tile-neighbor-5 .number-4,
-.tile-neighbor-5 .number-6,
-.tile-neighbor-5 .number-7,
-.tile-neighbor-5 .number-8,
-.tile-neighbor-5 .mine,
-.tile-neighbor-5 .flag,
-.tile-neighbor-5 .wrong-guess { display: none; }
+.tile-neighbor_5 .revealed-tile,
+.tile-neighbor_5 .number-5 { display: block; }
 
-.tile-neighbor-6 .revealed-tile,
-.tile-neighbor-6 .number-6 { display: block; }
-.tile-neighbor-6 .unplayed-tile,
-.tile-neighbor-6 .number-1,
-.tile-neighbor-6 .number-2,
-.tile-neighbor-6 .number-3,
-.tile-neighbor-6 .number-4,
-.tile-neighbor-6 .number-5,
-.tile-neighbor-6 .number-7,
-.tile-neighbor-6 .number-8,
-.tile-neighbor-6 .mine,
-.tile-neighbor-6 .flag,
-.tile-neighbor-6 .wrong-guess { display: none; }
+.tile-neighbor_6 .revealed-tile,
+.tile-neighbor_6 .number-6 { display: block; }
 
-.tile-neighbor-7 .revealed-tile,
-.tile-neighbor-7 .number-7 { display: block; }
-.tile-neighbor-7 .unplayed-tile,
-.tile-neighbor-7 .number-1,
-.tile-neighbor-7 .number-2,
-.tile-neighbor-7 .number-3,
-.tile-neighbor-7 .number-4,
-.tile-neighbor-7 .number-5,
-.tile-neighbor-7 .number-6,
-.tile-neighbor-7 .number-8,
-.tile-neighbor-7 .mine,
-.tile-neighbor-7 .flag,
-.tile-neighbor-7 .wrong-guess { display: none; }
+.tile-neighbor_7 .revealed-tile,
+.tile-neighbor_7 .number-7 { display: block; }
 
-.tile-neighbor-8 .revealed-tile,
-.tile-neighbor-8 .number-8 { display: block; }
-.tile-neighbor-8 .unplayed-tile,
-.tile-neighbor-8 .number-1,
-.tile-neighbor-8 .number-2,
-.tile-neighbor-8 .number-3,
-.tile-neighbor-8 .number-4,
-.tile-neighbor-8 .number-5,
-.tile-neighbor-8 .number-6,
-.tile-neighbor-8 .number-7,
-.tile-neighbor-8 .mine,
-.tile-neighbor-8 .flag,
-.tile-neighbor-8 .wrong-guess { display: none; }
+.tile-neighbor_8 .revealed-tile,
+.tile-neighbor_8 .number-8 { display: block; }
 
 /* Number colors */
 .number-1 { fill: var(--number-1-color); }
@@ -220,7 +111,6 @@
 .wrong-guess { fill: var(--wrong-guess-color); }
 
 /* Inner shadow effect */
-.inner-shadow-enabled .unplayed-tile,
-.inner-shadow-enabled .pressed-tile {
+.inner-shadow-enabled .unplayed-tile {
   filter: url(#innerShadow);
 }

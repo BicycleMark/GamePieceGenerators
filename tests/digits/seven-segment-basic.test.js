@@ -2,6 +2,9 @@
  * Basic tests for SevenSegmentDisplay class
  */
 
+// Import the base class first
+const BaseDisplay = require('../../shared/js/base-display.js');
+
 // Import the class to test
 const SevenSegmentDisplay = require('../../digits/js/seven-segment.js');
 
@@ -72,12 +75,18 @@ describe('SevenSegmentDisplay', () => {
   
   // Test that the class has the expected methods
   test('SevenSegmentDisplay has expected methods', () => {
-    const methods = [
-      'init',
-      'createSegments',
+    // Methods specific to SevenSegmentDisplay
+    const specificMethods = [
+      'createElements', // renamed from createSegments
       'setDigit',
       'updateStyles',
       'setGlowEffect',
+      'getViewBox'
+    ];
+    
+    // Methods inherited from BaseDisplay
+    const inheritedMethods = [
+      'init',
       'setOption',
       'exportSVG',
       'createSVGUrl',
@@ -85,9 +94,16 @@ describe('SevenSegmentDisplay', () => {
       'resize'
     ];
     
+    // Check specific methods
     const proto = SevenSegmentDisplay.prototype;
-    methods.forEach(method => {
+    specificMethods.forEach(method => {
       expect(typeof proto[method]).toBe('function');
+    });
+    
+    // Check inherited methods
+    inheritedMethods.forEach(method => {
+      // These methods might be on the prototype chain, not directly on the prototype
+      expect(typeof display[method]).toBe('function');
     });
   });
   

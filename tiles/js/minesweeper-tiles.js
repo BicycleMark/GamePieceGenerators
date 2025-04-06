@@ -1,41 +1,46 @@
 /**
  * MinesweeperTileDisplay - A class to create and manage minesweeper tile displays
+ * Extends the BaseDisplay class for shared functionality
  */
-class MinesweeperTileDisplay {
+class MinesweeperTileDisplay extends BaseDisplay {
   /**
    * Constructor for the MinesweeperTileDisplay class
    * @param {HTMLElement} element - The SVG element to render the display in
    * @param {Object} options - Configuration options
    */
   constructor(element, options = {}) {
-    this.element = element;
-    this.options = {
-      unplayedColor: options.unplayedColor || '#4a90e2',
-      revealedColor: options.revealedColor || '#C0C0C0',
-      borderColor: options.borderColor || '#2c3e50',
-      highlightColor: options.highlightColor || '#ffffff',
-      shadowColor: options.shadowColor || '#2c3e50',
-      numberOutlineColor: options.numberOutlineColor || '#ffffff',
-      numberOutlineWidth: options.numberOutlineWidth || 1,
-      number1Color: options.number1Color || '#0000FF',
-      number2Color: options.number2Color || '#008000',
-      number3Color: options.number3Color || '#FF0000',
-      number4Color: options.number4Color || '#000080',
-      number5Color: options.number5Color || '#800000',
-      number6Color: options.number6Color || '#008080',
-      number7Color: options.number7Color || '#000000',
-      number8Color: options.number8Color || '#808080',
-      mineColor: options.mineColor || '#000000',
-      flagColor: options.flagColor || '#FF0000',
-      wrongGuessColor: options.wrongGuessColor || '#FF0000',
-      shadowOpacity: options.shadowOpacity !== undefined ? options.shadowOpacity : 0.8,
-      highlightOpacity: options.highlightOpacity !== undefined ? options.highlightOpacity : 0.7,
-      innerShadowEnabled: options.innerShadowEnabled !== undefined ? options.innerShadowEnabled : true,
-      innerShadowBlur: options.innerShadowBlur !== undefined ? options.innerShadowBlur : 1,
-      innerShadowOffset: options.innerShadowOffset !== undefined ? options.innerShadowOffset : 2,
-      tileSize: options.tileSize || 150,
-      ...options
+    // Define default options for minesweeper tiles
+    const defaultOptions = {
+      unplayedColor: '#4a90e2',
+      revealedColor: '#C0C0C0',
+      borderColor: '#2c3e50',
+      highlightColor: '#ffffff',
+      shadowColor: '#2c3e50',
+      numberOutlineColor: '#ffffff',
+      numberOutlineWidth: 1,
+      number1Color: '#0000FF',
+      number2Color: '#008000',
+      number3Color: '#FF0000',
+      number4Color: '#000080',
+      number5Color: '#800000',
+      number6Color: '#008080',
+      number7Color: '#000000',
+      number8Color: '#808080',
+      mineColor: '#000000',
+      flagColor: '#FF0000',
+      wrongGuessColor: '#FF0000',
+      shadowOpacity: 0.8,
+      highlightOpacity: 0.7,
+      innerShadowEnabled: true,
+      innerShadowBlur: 1,
+      innerShadowOffset: 2,
+      width: 150,
+      height: 150,
+      tileSize: 150
     };
+    
+    // Call the parent constructor with the element, options, and default options
+    super(element, options, defaultOptions);
     
     // Define tile states
     this.tileStates = [
@@ -56,22 +61,34 @@ class MinesweeperTileDisplay {
     ];
     
     this.currentState = 'unplayed'; // Default to unplayed
-    this.init();
   }
   
   /**
-   * Initialize the display
+   * Get the viewBox for the SVG
+   * @returns {string} - The viewBox attribute value
    */
-  init() {
-    // Clear any existing content
-    this.element.innerHTML = '';
-    
-    // Set the viewBox and dimensions
-    this.element.setAttribute('viewBox', `0 0 100 100`);
+  getViewBox() {
+    return '0 0 100 100';
+  }
+  
+  /**
+   * Update the dimensions of the display
+   * Override to use tileSize for both width and height
+   */
+  updateDimensions() {
     this.element.style.width = `${this.options.tileSize}px`;
     this.element.style.height = `${this.options.tileSize}px`;
     
-    // Add the defs section with filter for inner shadow effect
+    // Keep width and height in sync with tileSize
+    this.options.width = this.options.tileSize;
+    this.options.height = this.options.tileSize;
+  }
+  
+  /**
+   * Add the defs section with filters
+   * Override to add minesweeper-specific filters
+   */
+  addDefs() {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     defs.innerHTML = `
       <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -88,24 +105,21 @@ class MinesweeperTileDisplay {
       </filter>
     `;
     this.element.appendChild(defs);
-    
-    // Create the tile elements
-    this.createTileElements();
-    
-    // Apply initial styling
-    this.updateStyles();
-    
-    // Set initial state
-    this.setState(this.currentState);
-    
-    // Apply inner shadow if enabled
-    this.setInnerShadowEffect(this.options.innerShadowEnabled);
   }
   
   /**
-   * Create the SVG elements for the tile
+   * Get the default state for the display
+   * @returns {string} - The default state
    */
-  createTileElements() {
+  getDefaultState() {
+    return 'unplayed';
+  }
+  
+  /**
+   * Create the display elements
+   * Override to create minesweeper-specific elements
+   */
+  createElements() {
     // Create unplayed tile (blue button with 3D effect)
     const unplayedTile = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     unplayedTile.setAttribute('class', 'unplayed-tile');

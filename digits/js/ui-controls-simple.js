@@ -273,11 +273,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Initialize settings
   console.log('Initializing settings...');
-  const settingsResult = await SettingsManager.initializeSettings(display, controls);
-  settingsSourceElement.textContent = settingsResult.source;
-  
-  if (settingsResult.loaded) {
-    showStatusMessage(`Settings loaded from ${settingsResult.source}`, 'success');
+  try {
+    const settingsResult = await SettingsManager.initializeSettings(display, controls);
+    if (settingsResult && settingsResult.source) {
+      settingsSourceElement.textContent = settingsResult.source;
+      
+      if (settingsResult.loaded) {
+        showStatusMessage(`Settings loaded from ${settingsResult.source}`, 'success');
+      }
+    } else {
+      console.log('Settings initialization returned undefined or incomplete result');
+    }
+  } catch (error) {
+    console.error('Error initializing settings:', error);
+    showStatusMessage('Error initializing settings', 'error');
   }
   
   console.log('Settings initialized');

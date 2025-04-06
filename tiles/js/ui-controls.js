@@ -5,6 +5,25 @@
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('UI Controls initializing...');
   
+  // Add global error handler
+  window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Global error handler caught:', message, 'at', source, lineno, colno);
+    console.error('Error stack:', error && error.stack);
+    return false; // Let default error handler run too
+  };
+  
+  try {
+/**
+ * UI Controls for the Minesweeper Tile Generator
+ * With ZIP functionality for "Save All Tiles"
+ */
+/**
+ * UI Controls for the Minesweeper Tile Generator
+ * With ZIP functionality for "Save All Tiles"
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('UI Controls initializing...');
+  
   // Initialize the display
   const displayElement = document.getElementById('tile-display');
   let display = new MinesweeperTileDisplay(displayElement, {
@@ -87,41 +106,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Update View All Tile States link with current settings
   if (viewAllStatesLink) {
     viewAllStatesLink.addEventListener('click', (e) => {
-      // Get current settings
-      const settings = {
-        unplayedColor: unplayedColorPicker.value,
-        revealedColor: revealedColorPicker.value,
-        borderColor: borderColorPicker.value,
-        highlightColor: highlightColorPicker.value,
-        shadowColor: shadowColorPicker.value,
-        numberOutlineColor: numberOutlineColorPicker.value,
-        numberOutlineWidth: numberOutlineWidthSlider.value,
-        number1Color: number1ColorPicker.value,
-        number2Color: number2ColorPicker.value,
-        number3Color: number3ColorPicker.value,
-        number4Color: number4ColorPicker.value,
-        number5Color: number5ColorPicker.value,
-        number6Color: number6ColorPicker.value,
-        number7Color: number7ColorPicker.value,
-        number8Color: number8ColorPicker.value,
-        mineColor: mineColorPicker.value,
-        flagColor: flagColorPicker.value,
-        wrongGuessColor: wrongGuessColorPicker.value,
-        shadowOpacity: shadowOpacitySlider.value / 100,
-        highlightOpacity: highlightOpacitySlider.value / 100,
-        innerShadowEnabled: innerShadowEffectToggle.checked,
-        innerShadowBlur: innerShadowBlurSlider.value,
-        innerShadowOffset: innerShadowOffsetSlider.value,
-        tileSize: tileSizeSelector.value
-      };
-      
-      // Build query string
-      const queryString = Object.entries(settings)
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-        .join('&');
-      
-      // Update href with query string
-      e.target.href = `test-all-states.html?${queryString}`;
+      try {
+        // Get current settings
+        const settings = {
+          unplayedColor: unplayedColorPicker.value,
+          revealedColor: revealedColorPicker.value,
+          borderColor: borderColorPicker.value,
+          highlightColor: highlightColorPicker.value,
+          shadowColor: shadowColorPicker.value,
+          numberOutlineColor: numberOutlineColorPicker.value,
+          numberOutlineWidth: numberOutlineWidthSlider.value,
+          number1Color: number1ColorPicker.value,
+          number2Color: number2ColorPicker.value,
+          number3Color: number3ColorPicker.value,
+          number4Color: number4ColorPicker.value,
+          number5Color: number5ColorPicker.value,
+          number6Color: number6ColorPicker.value,
+          number7Color: number7ColorPicker.value,
+          number8Color: number8ColorPicker.value,
+          mineColor: mineColorPicker.value,
+          flagColor: flagColorPicker.value,
+          wrongGuessColor: wrongGuessColorPicker.value,
+          shadowOpacity: shadowOpacitySlider.value / 100,
+          highlightOpacity: highlightOpacitySlider.value / 100,
+          innerShadowEnabled: innerShadowEffectToggle.checked,
+          innerShadowBlur: innerShadowBlurSlider.value,
+          innerShadowOffset: innerShadowOffsetSlider.value,
+          tileSize: tileSizeSelector.value
+        };
+        
+        // Build query string
+        const queryString = Object.entries(settings)
+          .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+          .join('&');
+        
+        // Update href with query string
+        e.target.href = `test-all-states.html?${queryString}`;
+      } catch (error) {
+        console.error('Error updating View All Tile States link:', error);
+      }
     });
   }
   
@@ -550,11 +573,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Initialize settings
   console.log('Initializing settings...');
-  const settingsResult = await SettingsManager.initializeSettings(display, controls);
-  settingsSourceElement.textContent = settingsResult.source;
-  
-  if (settingsResult.loaded) {
-    showStatusMessage(`Settings loaded from ${settingsResult.source}`, 'success');
+  try {
+    const settingsResult = await SettingsManager.initializeSettings(display, controls);
+    if (settingsResult && settingsResult.source) {
+      settingsSourceElement.textContent = settingsResult.source;
+      
+      if (settingsResult.loaded) {
+        showStatusMessage(`Settings loaded from ${settingsResult.source}`, 'success');
+      }
+    } else {
+      console.log('Settings initialization returned undefined or incomplete result');
+    }
+  } catch (error) {
+    console.error('Error initializing settings:', error);
+    showStatusMessage('Error initializing settings', 'error');
   }
   
   console.log('Settings initialized');

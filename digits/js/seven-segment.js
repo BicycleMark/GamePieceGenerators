@@ -1,24 +1,27 @@
 /**
  * SevenSegmentDisplay - A class to create and manage 7-segment LED displays
+ * Extends the BaseDisplay class for shared functionality
  */
-class SevenSegmentDisplay {
+class SevenSegmentDisplay extends BaseDisplay {
   /**
    * Constructor for the SevenSegmentDisplay class
    * @param {HTMLElement} element - The SVG element to render the display in
    * @param {Object} options - Configuration options
    */
   constructor(element, options = {}) {
-    this.element = element;
-    this.options = {
-      backgroundColor: options.backgroundColor || '#000000',
-      foregroundColor: options.foregroundColor || '#ff0000',
-      opacityOffSegment: options.opacityOffSegment || 0.15,
-      width: options.width || 50,
-      height: options.height || 100,
-      glowEnabled: options.glowEnabled !== undefined ? options.glowEnabled : true,
-      edgeRadius: options.edgeRadius || 0,
-      ...options
+    // Define default options for seven-segment displays
+    const defaultOptions = {
+      backgroundColor: '#000000',
+      foregroundColor: '#ff0000',
+      opacityOffSegment: 0.15,
+      width: 50,
+      height: 100,
+      glowEnabled: true,
+      edgeRadius: 0
     };
+    
+    // Call the parent constructor with the element, options, and default options
+    super(element, options, defaultOptions);
     
     // Define segment patterns for each digit
     this.digitPatterns = {
@@ -36,22 +39,21 @@ class SevenSegmentDisplay {
     };
     
     this.currentDigit = '8'; // Default to 8 which shows all segments
-    this.init();
   }
   
   /**
-   * Initialize the display
+   * Get the viewBox for the SVG
+   * @returns {string} - The viewBox attribute value
    */
-  init() {
-    // Clear any existing content
-    this.element.innerHTML = '';
-    
-    // Set the viewBox and dimensions
-    this.element.setAttribute('viewBox', `0 0 50 100`);
-    this.element.style.width = `${this.options.width}px`;
-    this.element.style.height = `${this.options.height}px`;
-    
-    // Add the defs section with filter for glow effect
+  getViewBox() {
+    return '0 0 50 100';
+  }
+  
+  /**
+   * Add the defs section with filters
+   * Override to add seven-segment-specific filters
+   */
+  addDefs() {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     defs.innerHTML = `
       <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -71,24 +73,21 @@ class SevenSegmentDisplay {
     background.setAttribute('rx', this.options.edgeRadius);
     background.setAttribute('ry', this.options.edgeRadius);
     this.element.appendChild(background);
-    
-    // Create segments with paths
-    this.createSegments();
-    
-    // Apply initial styling
-    this.updateStyles();
-    
-    // Set initial digit
-    this.setDigit(this.currentDigit);
-    
-    // Apply glow if enabled
-    this.setGlowEffect(this.options.glowEnabled);
   }
   
   /**
-   * Create the SVG paths for each segment
+   * Get the default state for the display
+   * @returns {string} - The default state
    */
-  createSegments() {
+  getDefaultState() {
+    return '8';
+  }
+  
+  /**
+   * Create the display elements
+   * Override to create seven-segment-specific elements
+   */
+  createElements() {
     // Sharp-cornered segment paths with improved proportions
     const segmentPaths = {
       // Horizontal segments (a, g, d) - wider with better positioning

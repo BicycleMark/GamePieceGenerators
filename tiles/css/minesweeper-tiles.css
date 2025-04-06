@@ -49,7 +49,8 @@
 }
 
 /* Hide all elements by default */
-.unplayed-tile, .pressed-tile, .revealed-tile, .number, .mine, .flag, .wrong-guess {
+.unplayed-tile, .pressed-tile, .revealed-tile, .number, .mine, .flag, .wrong-guess,
+.smiley-normal, .smiley-cool, .smiley-sad, .smiley-neutral, .smiley-tense {
   display: none;
 }
 
@@ -93,6 +94,22 @@
 
 .tile-neighbor_8 .revealed-tile,
 .tile-neighbor_8 .number-8 { display: block; }
+
+/* New smiley tile states */
+.tile-smiley_normal .unplayed-tile,
+.tile-smiley_normal .smiley-normal { display: block; }
+
+.tile-smiley_cool .unplayed-tile,
+.tile-smiley_cool .smiley-cool { display: block; }
+
+.tile-smiley_sad .unplayed-tile,
+.tile-smiley_sad .smiley-sad { display: block; }
+
+.tile-smiley_neutral .unplayed-tile,
+.tile-smiley_neutral .smiley-neutral { display: block; }
+
+.tile-smiley_tense .pressed-tile,
+.tile-smiley_tense .smiley-tense { display: block; }
 
 /* Number colors */
 .number-1 { fill: var(--number-1-color); }

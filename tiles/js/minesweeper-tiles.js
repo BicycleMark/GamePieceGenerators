@@ -52,7 +52,13 @@ class MinesweeperTileDisplay {
       'neighbor_5',
       'neighbor_6',
       'neighbor_7',
-      'neighbor_8'
+      'neighbor_8',
+      // New smiley tile states
+      'smiley_normal',
+      'smiley_cool',
+      'smiley_sad',
+      'smiley_neutral',
+      'smiley_tense'
     ];
     
     this.currentState = 'unplayed'; // Default to unplayed
@@ -323,6 +329,91 @@ class MinesweeperTileDisplay {
       <line x1="75" y1="25" x2="25" y2="75" stroke="${this.options.wrongGuessColor}" stroke-width="8" stroke-linecap="round" />
     `;
     this.element.appendChild(wrongGuessElement);
+    
+    // Create normal smiley face
+    const smileyNormalElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    smileyNormalElement.setAttribute('class', 'smiley-normal');
+    smileyNormalElement.innerHTML = `
+      <!-- Smiley Face Circle -->
+      <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
+      
+      <!-- Eyes -->
+      <circle cx="40" cy="40" r="4" fill="#000000" />
+      <circle cx="60" cy="40" r="4" fill="#000000" />
+      
+      <!-- Smile -->
+      <path d="M35,55 Q50,70 65,55" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
+    `;
+    this.element.appendChild(smileyNormalElement);
+    
+    // Create cool smiley face with sunglasses
+    const smileyCoolElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    smileyCoolElement.setAttribute('class', 'smiley-cool');
+    smileyCoolElement.innerHTML = `
+      <!-- Smiley Face Circle -->
+      <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
+      
+      <!-- Sunglasses -->
+      <rect x="30" y="35" width="40" height="12" rx="2" ry="2" fill="#000000" />
+      <rect x="30" y="35" width="15" height="10" rx="2" ry="2" fill="#000000" />
+      <rect x="55" y="35" width="15" height="10" rx="2" ry="2" fill="#000000" />
+      
+      <!-- Sunglasses Reflection -->
+      <line x1="33" y1="38" x2="36" y2="38" stroke="#FFFFFF" stroke-width="1.5" />
+      <line x1="58" y1="38" x2="61" y2="38" stroke="#FFFFFF" stroke-width="1.5" />
+      
+      <!-- Smile -->
+      <path d="M35,60 Q50,70 65,60" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
+    `;
+    this.element.appendChild(smileyCoolElement);
+    
+    // Create sad smiley face
+    const smileySadElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    smileySadElement.setAttribute('class', 'smiley-sad');
+    smileySadElement.innerHTML = `
+      <!-- Smiley Face Circle -->
+      <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
+      
+      <!-- Eyes -->
+      <circle cx="40" cy="40" r="4" fill="#000000" />
+      <circle cx="60" cy="40" r="4" fill="#000000" />
+      
+      <!-- Frown -->
+      <path d="M35,65 Q50,55 65,65" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
+    `;
+    this.element.appendChild(smileySadElement);
+    
+    // Create neutral smiley face
+    const smileyNeutralElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    smileyNeutralElement.setAttribute('class', 'smiley-neutral');
+    smileyNeutralElement.innerHTML = `
+      <!-- Smiley Face Circle -->
+      <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
+      
+      <!-- Eyes -->
+      <circle cx="40" cy="40" r="4" fill="#000000" />
+      <circle cx="60" cy="40" r="4" fill="#000000" />
+      
+      <!-- Neutral Mouth -->
+      <line x1="35" y1="60" x2="65" y2="60" stroke="#000000" stroke-width="3" stroke-linecap="round" />
+    `;
+    this.element.appendChild(smileyNeutralElement);
+    
+    // Create tense smiley face
+    const smileyTenseElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    smileyTenseElement.setAttribute('class', 'smiley-tense');
+    smileyTenseElement.innerHTML = `
+      <!-- Smiley Face Circle -->
+      <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
+      
+      <!-- Eyes (worried look) -->
+      <path d="M36,38 Q40,35 44,38" stroke="#000000" stroke-width="2" fill="none" />
+      <path d="M56,38 Q60,35 64,38" stroke="#000000" stroke-width="2" fill="none" />
+      
+      <!-- Tense Mouth (straight with slight curve) -->
+      <path d="M35,60 Q50,58 65,60" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
+    `;
+    this.element.appendChild(smileyTenseElement);
   }
   
   /**
@@ -569,6 +660,11 @@ class MinesweeperTileDisplay {
       .mine { display: none; }
       .flag { display: none; }
       .wrong-guess { display: none; }
+      .smiley-normal { display: none; }
+      .smiley-cool { display: none; }
+      .smiley-sad { display: none; }
+      .smiley-neutral { display: none; }
+      .smiley-tense { display: none; }
       
       .tile-unplayed .unplayed-tile { display: block; }
       .tile-pressed .pressed-tile { display: block; }
@@ -584,6 +680,13 @@ class MinesweeperTileDisplay {
       .tile-neighbor_6 .revealed-tile, .tile-neighbor_6 .number-6 { display: block; }
       .tile-neighbor_7 .revealed-tile, .tile-neighbor_7 .number-7 { display: block; }
       .tile-neighbor_8 .revealed-tile, .tile-neighbor_8 .number-8 { display: block; }
+      
+      /* New smiley tile states */
+      .tile-smiley_normal .unplayed-tile, .tile-smiley_normal .smiley-normal { display: block; }
+      .tile-smiley_cool .unplayed-tile, .tile-smiley_cool .smiley-cool { display: block; }
+      .tile-smiley_sad .unplayed-tile, .tile-smiley_sad .smiley-sad { display: block; }
+      .tile-smiley_neutral .unplayed-tile, .tile-smiley_neutral .smiley-neutral { display: block; }
+      .tile-smiley_tense .pressed-tile, .tile-smiley_tense .smiley-tense { display: block; }
       
       .inner-shadow-enabled .unplayed-tile,
       .inner-shadow-enabled .pressed-tile {

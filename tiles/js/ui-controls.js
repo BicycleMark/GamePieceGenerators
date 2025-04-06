@@ -692,7 +692,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         'neighbor_5',
         'neighbor_6',
         'neighbor_7',
-        'neighbor_8'
+        'neighbor_8',
+        // New smiley tile states
+        'smiley_normal',
+        'smiley_cool',
+        'smiley_sad',
+        'smiley_neutral',
+        'smiley_tense'
       ];
       const format = getSelectedOutputFormat();
       console.log(`Selected format: ${format}`);

@@ -85,7 +85,13 @@ jest.mock('../../tiles/js/minesweeper-tiles.js', () => {
         'neighbor_5',
         'neighbor_6',
         'neighbor_7',
-        'neighbor_8'
+        'neighbor_8',
+        // New smiley tile states
+        'smiley_normal',
+        'smiley_cool',
+        'smiley_sad',
+        'smiley_neutral',
+        'smiley_tense'
       ],
       
       currentState: 'unplayed',
@@ -179,5 +185,44 @@ describe('MinesweeperTileDisplay', () => {
     display.resize(200);
     expect(display.resize).toHaveBeenCalledWith(200);
     expect(display.options.tileSize).toBe(200);
+  });
+  
+  // Tests for new smiley tile states
+  test('setState works with smiley_normal state', () => {
+    display.setState('smiley_normal');
+    expect(display.setState).toHaveBeenCalledWith('smiley_normal');
+    expect(display.currentState).toBe('smiley_normal');
+  });
+  
+  test('setState works with smiley_cool state', () => {
+    display.setState('smiley_cool');
+    expect(display.setState).toHaveBeenCalledWith('smiley_cool');
+    expect(display.currentState).toBe('smiley_cool');
+  });
+  
+  test('setState works with smiley_sad state', () => {
+    display.setState('smiley_sad');
+    expect(display.setState).toHaveBeenCalledWith('smiley_sad');
+    expect(display.currentState).toBe('smiley_sad');
+  });
+  
+  test('setState works with smiley_neutral state', () => {
+    display.setState('smiley_neutral');
+    expect(display.setState).toHaveBeenCalledWith('smiley_neutral');
+    expect(display.currentState).toBe('smiley_neutral');
+  });
+  
+  test('setState works with smiley_tense state', () => {
+    display.setState('smiley_tense');
+    expect(display.setState).toHaveBeenCalledWith('smiley_tense');
+    expect(display.currentState).toBe('smiley_tense');
+  });
+  
+  test('tileStates array includes all smiley states', () => {
+    expect(display.tileStates).toContain('smiley_normal');
+    expect(display.tileStates).toContain('smiley_cool');
+    expect(display.tileStates).toContain('smiley_sad');
+    expect(display.tileStates).toContain('smiley_neutral');
+    expect(display.tileStates).toContain('smiley_tense');
   });
 });

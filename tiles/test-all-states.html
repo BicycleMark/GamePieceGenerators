@@ -117,6 +117,38 @@
   <script src="js/minesweeper-tiles.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Parse URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Create options object from URL parameters
+      const options = {};
+      
+      // Add parameters to options if they exist
+      if (urlParams.has('unplayedColor')) options.unplayedColor = urlParams.get('unplayedColor');
+      if (urlParams.has('revealedColor')) options.revealedColor = urlParams.get('revealedColor');
+      if (urlParams.has('borderColor')) options.borderColor = urlParams.get('borderColor');
+      if (urlParams.has('highlightColor')) options.highlightColor = urlParams.get('highlightColor');
+      if (urlParams.has('shadowColor')) options.shadowColor = urlParams.get('shadowColor');
+      if (urlParams.has('number1Color')) options.number1Color = urlParams.get('number1Color');
+      if (urlParams.has('number2Color')) options.number2Color = urlParams.get('number2Color');
+      if (urlParams.has('number3Color')) options.number3Color = urlParams.get('number3Color');
+      if (urlParams.has('number4Color')) options.number4Color = urlParams.get('number4Color');
+      if (urlParams.has('number5Color')) options.number5Color = urlParams.get('number5Color');
+      if (urlParams.has('number6Color')) options.number6Color = urlParams.get('number6Color');
+      if (urlParams.has('number7Color')) options.number7Color = urlParams.get('number7Color');
+      if (urlParams.has('number8Color')) options.number8Color = urlParams.get('number8Color');
+      if (urlParams.has('mineColor')) options.mineColor = urlParams.get('mineColor');
+      if (urlParams.has('flagColor')) options.flagColor = urlParams.get('flagColor');
+      if (urlParams.has('wrongGuessColor')) options.wrongGuessColor = urlParams.get('wrongGuessColor');
+      
+      // Handle numeric and boolean parameters
+      if (urlParams.has('shadowOpacity')) options.shadowOpacity = parseFloat(urlParams.get('shadowOpacity'));
+      if (urlParams.has('highlightOpacity')) options.highlightOpacity = parseFloat(urlParams.get('highlightOpacity'));
+      if (urlParams.has('innerShadowEnabled')) options.innerShadowEnabled = urlParams.get('innerShadowEnabled') === 'true';
+      if (urlParams.has('innerShadowBlur')) options.innerShadowBlur = parseInt(urlParams.get('innerShadowBlur'));
+      if (urlParams.has('innerShadowOffset')) options.innerShadowOffset = parseInt(urlParams.get('innerShadowOffset'));
+      if (urlParams.has('tileSize')) options.tileSize = parseInt(urlParams.get('tileSize'));
+      
       // Initialize all tiles
       const tileIds = [
         'unplayed-tile',
@@ -138,9 +170,9 @@
       // Create a display for each tile
       tileIds.forEach(id => {
         const element = document.getElementById(id);
-        const display = new MinesweeperTileDisplay(element, {
-          tileSize: 150
-        });
+        
+        // Apply options from URL parameters
+        const display = new MinesweeperTileDisplay(element, options);
         
         // Set the state based on the id
         const state = id.replace('-tile', '');

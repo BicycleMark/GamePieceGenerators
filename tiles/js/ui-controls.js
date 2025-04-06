@@ -73,9 +73,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   const saveAllButton = document.getElementById('save-all-button');
   const copyButton = document.getElementById('copy-button');
   
+  // View All Tile States link
+  const viewAllStatesLink = document.getElementById('view-all-states-link');
+  
   console.log('DOM elements initialized');
   
   // Event handlers
+  
+  // Update View All Tile States link with current settings
+  if (viewAllStatesLink) {
+    viewAllStatesLink.addEventListener('click', (e) => {
+      // Get current settings
+      const settings = {
+        unplayedColor: unplayedColorPicker.value,
+        revealedColor: revealedColorPicker.value,
+        borderColor: borderColorPicker.value,
+        highlightColor: highlightColorPicker.value,
+        shadowColor: shadowColorPicker.value,
+        number1Color: number1ColorPicker.value,
+        number2Color: number2ColorPicker.value,
+        number3Color: number3ColorPicker.value,
+        number4Color: number4ColorPicker.value,
+        number5Color: number5ColorPicker.value,
+        number6Color: number6ColorPicker.value,
+        number7Color: number7ColorPicker.value,
+        number8Color: number8ColorPicker.value,
+        mineColor: mineColorPicker.value,
+        flagColor: flagColorPicker.value,
+        wrongGuessColor: wrongGuessColorPicker.value,
+        shadowOpacity: shadowOpacitySlider.value / 100,
+        highlightOpacity: highlightOpacitySlider.value / 100,
+        innerShadowEnabled: innerShadowEffectToggle.checked,
+        innerShadowBlur: innerShadowBlurSlider.value,
+        innerShadowOffset: innerShadowOffsetSlider.value,
+        tileSize: tileSizeSelector.value
+      };
+      
+      // Build query string
+      const queryString = Object.entries(settings)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
+      
+      // Update href with query string
+      e.target.href = `test-all-states.html?${queryString}`;
+    });
+  }
   
   // Tile state selector
   tileStateSelector.addEventListener('change', (e) => {

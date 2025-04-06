@@ -16,6 +16,7 @@ class MinesweeperTileDisplay {
       highlightColor: options.highlightColor || '#ffffff',
       shadowColor: options.shadowColor || '#2c3e50',
       numberOutlineColor: options.numberOutlineColor || '#ffffff',
+      numberOutlineWidth: options.numberOutlineWidth || 1,
       number1Color: options.number1Color || '#0000FF',
       number2Color: options.number2Color || '#008000',
       number3Color: options.number3Color || '#FF0000',
@@ -257,7 +258,7 @@ class MinesweeperTileDisplay {
           dominant-baseline="central"
           fill="${this.options[`number${i}Color`]}"
           stroke="${this.options.numberOutlineColor}"
-          stroke-width="1"
+          stroke-width="${this.options.numberOutlineWidth}"
         >
           ${i}
         </text>
@@ -477,6 +478,7 @@ class MinesweeperTileDisplay {
       const numberText = this.element.querySelector(`.number-${i} text`);
       if (numberText) {
         numberText.setAttribute('stroke', this.options.numberOutlineColor);
+        numberText.setAttribute('stroke-width', this.options.numberOutlineWidth);
       }
     }
   }
@@ -536,6 +538,7 @@ class MinesweeperTileDisplay {
         <highlightColor>${this.options.highlightColor}</highlightColor>
         <shadowColor>${this.options.shadowColor}</shadowColor>
         <numberOutlineColor>${this.options.numberOutlineColor}</numberOutlineColor>
+        <numberOutlineWidth>${this.options.numberOutlineWidth}</numberOutlineWidth>
         <number1Color>${this.options.number1Color}</number1Color>
         <number2Color>${this.options.number2Color}</number2Color>
         <number3Color>${this.options.number3Color}</number3Color>
@@ -652,4 +655,9 @@ class MinesweeperTileDisplay {
     this.element.style.height = `${size}px`;
     this.updateStyles();
   }
+}
+
+// For Node.js/Jest environment
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = MinesweeperTileDisplay;
 }

@@ -251,7 +251,35 @@ function createSettingsFile(display) {
 function createDefaultsFile() {
   // Create a temporary display with default settings
   const tempElement = document.createElement('div');
-  const tempDisplay = new MinesweeperTileDisplay(tempElement, {});
+  // Use a mock display instead of MinesweeperTileDisplay for testing
+  const tempDisplay = {
+    currentState: 'unplayed',
+    options: {
+      unplayedColor: '#4a90e2',
+      revealedColor: '#C0C0C0',
+      borderColor: '#2c3e50',
+      highlightColor: '#ffffff',
+      shadowColor: '#2c3e50',
+      numberOutlineColor: '#ffffff',
+      number1Color: '#0000FF',
+      number2Color: '#008000',
+      number3Color: '#FF0000',
+      number4Color: '#000080',
+      number5Color: '#800000',
+      number6Color: '#008080',
+      number7Color: '#000000',
+      number8Color: '#808080',
+      mineColor: '#000000',
+      flagColor: '#FF0000',
+      wrongGuessColor: '#FF0000',
+      shadowOpacity: 0.8,
+      highlightOpacity: 0.7,
+      innerShadowEnabled: true,
+      innerShadowBlur: 1,
+      innerShadowOffset: 2,
+      tileSize: 150
+    }
+  };
   
   const settings = generateMetadata(tempDisplay);
   settings.meta = {
@@ -423,7 +451,7 @@ async function initializeSettings(display, controls) {
 }
 
 // Export functions
-window.SettingsManager = {
+const SettingsManager = {
   generateMetadata,
   applySettingsFromMetadata,
   updateControlsFromSettings,
@@ -437,3 +465,13 @@ window.SettingsManager = {
   VERSION,
   BUILD_DATE
 };
+
+// For browser environment
+if (typeof window !== 'undefined') {
+  window.SettingsManager = SettingsManager;
+}
+
+// For Node.js/Jest environment
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SettingsManager;
+}

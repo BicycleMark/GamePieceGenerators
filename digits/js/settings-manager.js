@@ -183,7 +183,19 @@ function createSettingsFile(display) {
 function createDefaultsFile() {
   // Create a temporary display with default settings
   const tempElement = document.createElement('div');
-  const tempDisplay = new SevenSegmentDisplay(tempElement, {});
+  // Use a mock display instead of SevenSegmentDisplay for testing
+  const tempDisplay = {
+    currentDigit: '8',
+    options: {
+      backgroundColor: '#000000',
+      foregroundColor: '#ff0000',
+      opacityOffSegment: 0.15,
+      width: 50,
+      height: 100,
+      glowEnabled: true,
+      edgeRadius: 0
+    }
+  };
   
   const settings = generateMetadata(tempDisplay);
   settings.meta = {
@@ -355,7 +367,7 @@ async function initializeSettings(display, controls) {
 }
 
 // Export functions
-window.SettingsManager = {
+const SettingsManager = {
   generateMetadata,
   applySettingsFromMetadata,
   updateControlsFromSettings,
@@ -369,3 +381,13 @@ window.SettingsManager = {
   VERSION,
   BUILD_DATE
 };
+
+// For browser environment
+if (typeof window !== 'undefined') {
+  window.SettingsManager = SettingsManager;
+}
+
+// For Node.js/Jest environment
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SettingsManager;
+}

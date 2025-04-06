@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const wrongGuessColorText = document.getElementById('wrong-guess-color-text');
   
   // Effect sliders
+  const numberOutlineWidthSlider = document.getElementById('number-outline-width-slider');
+  const numberOutlineWidthValue = document.getElementById('number-outline-width-value');
   const shadowOpacitySlider = document.getElementById('shadow-opacity-slider');
   const shadowOpacityValue = document.getElementById('shadow-opacity-value');
   const highlightOpacitySlider = document.getElementById('highlight-opacity-slider');
@@ -93,6 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         highlightColor: highlightColorPicker.value,
         shadowColor: shadowColorPicker.value,
         numberOutlineColor: numberOutlineColorPicker.value,
+        numberOutlineWidth: numberOutlineWidthSlider.value,
         number1Color: number1ColorPicker.value,
         number2Color: number2ColorPicker.value,
         number3Color: number3ColorPicker.value,
@@ -343,6 +346,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     display.setOption('innerShadowOffset', offset);
   });
   
+  // Number outline width slider
+  numberOutlineWidthSlider.addEventListener('input', (e) => {
+    const width = parseInt(e.target.value);
+    numberOutlineWidthValue.textContent = width.toString();
+    display.setOption('numberOutlineWidth', width);
+  });
+  
   console.log('Event handlers initialized');
   
   // Helper function to get the selected output format
@@ -511,6 +521,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     shadowColorText,
     numberOutlineColorPicker,
     numberOutlineColorText,
+    numberOutlineWidthSlider,
+    numberOutlineWidthValue,
     number1ColorPicker,
     number2ColorPicker,
     number3ColorPicker,

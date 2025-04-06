@@ -327,3 +327,8 @@ class SevenSegmentDisplay {
     this.updateStyles();
   }
 }
+
+// For Node.js/Jest environment
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SevenSegmentDisplay;
+}

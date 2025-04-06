@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   console.log('Display initialized');
   
+  // View All Digits link
+  const viewAllDigitsLink = document.getElementById('view-all-digits-link');
+  
   // Status message element
   const statusElement = document.getElementById('settings-status');
   const settingsSourceElement = document.getElementById('settings-source');
@@ -42,6 +45,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   console.log('DOM elements initialized');
   
+  // Function to update the "View All Digits" link with current parameters
+  function updateViewAllDigitsLink() {
+    if (!viewAllDigitsLink) return;
+    
+    const params = new URLSearchParams();
+    
+    // Add current display settings to URL parameters
+    params.set('foregroundColor', display.options.foregroundColor);
+    params.set('backgroundColor', display.options.backgroundColor);
+    params.set('opacityOffSegment', display.options.opacityOffSegment);
+    params.set('edgeRadius', display.options.edgeRadius);
+    params.set('glowEnabled', display.options.glowEnabled);
+    params.set('width', display.options.width);
+    params.set('height', display.options.height);
+    
+    // Update the link href
+    viewAllDigitsLink.href = `test-all-digits.html?${params.toString()}`;
+  }
+  
+  // Set initial link parameters
+  updateViewAllDigitsLink();
+  
   // Event handlers
   
   // Digit selector
@@ -53,11 +78,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   displaySizeSelector.addEventListener('change', (e) => {
     const [width, height] = e.target.value.split(',').map(Number);
     display.resize(width, height);
+    updateViewAllDigitsLink();
   });
   
   // Glow effect
   glowEffectToggle.addEventListener('change', (e) => {
     display.setOption('glowEnabled', e.target.checked);
+    updateViewAllDigitsLink();
   });
   
   // Foreground color
@@ -65,6 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const color = e.target.value;
     foregroundColorText.value = color;
     display.setOption('foregroundColor', color);
+    updateViewAllDigitsLink();
   });
   
   foregroundColorText.addEventListener('input', (e) => {
@@ -73,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (/^#[0-9A-F]{6}$/i.test(color)) {
       foregroundColorPicker.value = color;
       display.setOption('foregroundColor', color);
+      updateViewAllDigitsLink();
     }
   });
   
@@ -81,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const color = e.target.value;
     backgroundColorText.value = color;
     display.setOption('backgroundColor', color);
+    updateViewAllDigitsLink();
   });
   
   backgroundColorText.addEventListener('input', (e) => {
@@ -89,6 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (/^#[0-9A-F]{6}$/i.test(color)) {
       backgroundColorPicker.value = color;
       display.setOption('backgroundColor', color);
+      updateViewAllDigitsLink();
     }
   });
   
@@ -97,6 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const opacity = e.target.value / 100;
     opacityValue.textContent = `${e.target.value}%`;
     display.setOption('opacityOffSegment', opacity);
+    updateViewAllDigitsLink();
   });
   
   // Edge radius slider
@@ -104,6 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const radius = parseInt(e.target.value);
     edgeRadiusValue.textContent = radius.toString();
     display.setOption('edgeRadius', radius);
+    updateViewAllDigitsLink();
   });
   
   console.log('Event handlers initialized');
@@ -280,6 +313,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     showStatusMessage(`Settings loaded from ${settingsResult.source}`, 'success');
   }
   
+  // Update the link after settings are loaded
+  updateViewAllDigitsLink();
+  
   console.log('Settings initialized');
   
   // Save settings button
@@ -301,6 +337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           .then(() => {
             settingsSourceElement.textContent = 'imported file';
             showStatusMessage('Settings loaded successfully', 'success');
+            updateViewAllDigitsLink();
           })
           .catch(error => {
             console.error('Error loading settings:', error);
@@ -387,67 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
-  // Function to detect Apple Silicon
-  function detectAppleSilicon() {
-    // Method 1: Check for WebAssembly SIMD support (more common on Apple Silicon)
-    const hasWasmSimd = (() => {
-      try {
-        return WebAssembly && WebAssembly.validate(new Uint8Array([
-          0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11
-        ]));
-      } catch (e) {
-        return false;
-      }
-    })();
-    
-    // Method 2: Performance characteristics test
-    // Apple Silicon has distinctive performance patterns
-    const perfTest = (() => {
-      const start = performance.now();
-      // Run computation that performs differently on ARM vs x86
-      let result = 0;
-      for (let i = 0; i < 1000000; i++) {
-        result += Math.sqrt(i) * Math.sin(i);
-      }
-      const duration = performance.now() - start;
-      // Threshold based on testing (would need calibration)
-      return duration < 50; // If very fast, likely Apple Silicon
-    })();
-    
-    // Method 3: Canvas fingerprinting differences
-    const canvasTest = (() => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'rgba(125, 125, 125, 0.5)';
-      ctx.fillRect(0, 0, 10, 10);
-      const imgData = ctx.getImageData(0, 0, 10, 10).data;
-      // Check specific pixel values that differ between architectures
-      // (This would need calibration based on testing)
-      return imgData[0] === 125 && imgData[3] === 127;
-    })();
-    
-    // Combine results with UA string analysis
-    const ua = navigator.userAgent.toLowerCase();
-    const isMac = ua.includes('mac');
-    const isChrome = ua.includes('chrome');
-    const isSafari = ua.includes('safari') && !ua.includes('chrome');
-    
-    // Make determination based on combined signals
-    return {
-      isAppleSilicon: isMac && (hasWasmSimd || perfTest || canvasTest),
-      confidence: [hasWasmSimd, perfTest, canvasTest].filter(Boolean).length / 3,
-      details: {
-        platform: navigator.platform,
-        hasWasmSimd,
-        perfTest,
-        canvasTest,
-        isMac,
-        browser: isSafari ? 'Safari' : isChrome ? 'Chrome' : 'Other'
-      }
-    };
-  }
-  
-  // Save all digits with settings.json and defaults.json - ZIP VERSION
+  // Save all digits with settings.json and defaults.json
   saveAllButton.addEventListener('click', async () => {
     console.log('Save All Digits button clicked');
     
@@ -495,94 +472,33 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Clean up temporary display
       document.body.removeChild(tempDisplayElement);
       
-      // Create an array to store successful digit metadata
-      const successfulDigits = [];
-      
       // Process each digit
-      if (format === 'svg') {
-        console.log('Processing SVG format');
-        // Generate SVG for each digit
-        for (const digit of digits) {
-          try {
-            console.log(`Processing digit: ${digit}`);
-            // Set the display to show this digit
-            display.setDigit(digit);
-            
-            // Generate filename
-            const filename = getFilename(digit, format);
-            
+      for (const digit of digits) {
+        try {
+          console.log(`Processing digit: ${digit}`);
+          // Set the display to show this digit
+          display.setDigit(digit);
+          
+          // Generate filename
+          const filename = getFilename(digit, format);
+          
+          if (format === 'svg') {
             // Get SVG content
             const svgContent = display.exportSVG();
             
             // Add to zip with appropriate filename
             zip.file(filename, svgContent);
-            console.log(`Added ${filename} to ZIP`);
-            
-            // Only add to metadata array after successful addition to ZIP
-            // Generate metadata for this specific image
-            const metadata = SettingsManager.generateMetadata(display);
-            metadata.digit = digit;
-            metadata.export = {
-              format: format,
-              timestamp: new Date().toISOString(),
-              filename: filename
-            };
-            metadata.meta = {
-              type: "image-settings",
-              description: `Settings used to generate ${filename}`
-            };
-            
-            // Add to successful digits array
-            successfulDigits.push(metadata);
-            console.log(`Added metadata for ${filename} to array`);
-          } catch (error) {
-            console.error(`Error processing digit ${digit}:`, error);
-            // Continue with next digit
-          }
-        }
-      } else if (format === 'png') {
-        console.log('Processing PNG format');
-        // For PNG, we need to process each digit sequentially due to the async nature
-        for (const digit of digits) {
-          try {
-            console.log(`Processing digit: ${digit}`);
-            // Set the display to show this digit
-            display.setDigit(digit);
-            
-            // Generate filename
-            const filename = getFilename(digit, format);
-            
-            // Export as PNG - need to handle this differently due to async nature
+          } else if (format === 'png') {
+            // For PNG, we need to handle this differently due to async nature
             await new Promise((resolve, reject) => {
               display.exportAsPNG((pngUrl) => {
                 try {
                   // Convert data URL to blob
-                  console.log('Converting data URL to blob');
                   fetch(pngUrl)
                     .then(res => res.blob())
                     .then(blob => {
                       // Add to zip with appropriate filename
                       zip.file(filename, blob);
-                      console.log(`Added ${filename} to ZIP`);
-                      
-                      // Only add to metadata array after successful addition to ZIP
-                      // Generate metadata for this specific image
-                      const metadata = SettingsManager.generateMetadata(display);
-                      metadata.digit = digit;
-                      metadata.export = {
-                        format: format,
-                        timestamp: new Date().toISOString(),
-                        filename: filename
-                      };
-                      metadata.meta = {
-                        type: "image-settings",
-                        description: `Settings used to generate ${filename}`
-                      };
-                      
-                      // Add to successful digits array
-                      successfulDigits.push(metadata);
-                      console.log(`Added metadata for ${filename} to array`);
-                      
                       resolve();
                     })
                     .catch(error => {
@@ -595,200 +511,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
               });
             });
-          } catch (error) {
-            console.error(`Error processing digit ${digit}:`, error);
-            // Continue with next digit
           }
-        }
-      }
-      
-      // Load pre-generated metadata from metadata.json
-      console.log('Loading metadata from metadata.json file');
-      
-      // Function to load the metadata.json file using a synchronous XMLHttpRequest
-      // This avoids CORS issues when running from a file:// URL
-      function loadMetadataSync() {
-        try {
-          // Create a script tag to load the metadata as a global variable
-          const script = document.createElement('script');
-          script.innerHTML = `
-            window.gitMetadataFromFile = {
-              timestamp: "${new Date().toISOString()}",
-              repository: {
-                url: "https://github.com/BicycleMark/digits.git",
-                branch: "main",
-                commit: {
-                  id: "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
-                  message: "All done",
-                  date: "2025-04-05T17:10:58-05:00"
-                },
-                tags: [],
-                recentCommits: [
-                  {
-                    id: "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
-                    message: "All done",
-                    date: "2025-04-05T17:10:58-05:00"
-                  },
-                  {
-                    id: "cc13bf1d24bc12ae5d03b82285c7ba5cbad7c65d",
-                    message: "before rolling up the data",
-                    date: "2025-04-05T16:56:13-05:00"
-                  },
-                  {
-                    id: "265b123659200af1e7e8f0606259cd14f7d69dee",
-                    message: "Removed unused files",
-                    date: "2025-04-05T16:20:13-05:00"
-                  }
-                ]
-              },
-              user: {
-                name: "markwardell",
-                email: "mark.d.wardell@gmail.com"
-              },
-              environment: {
-                os: "darwin",
-                nodeVersion: "v23.11.0",
-                cpuArchitecture: "Apple Silicon",
-                isAppleSilicon: true,
-                appVersion: "1.0.0",
-                timestamp: "${new Date().toISOString()}"
-              }
-            };
-          `;
-          document.head.appendChild(script);
           
-          // Return the metadata
-          return window.gitMetadataFromFile;
+          console.log(`Added ${filename} to ZIP`);
         } catch (error) {
-          console.error('Error loading metadata:', error);
-          // Fallback to default metadata if loading fails
-          return {
-            timestamp: new Date().toISOString(),
-            repository: {
-              url: "Unknown (run metadata-generator.js to update)",
-              branch: "Unknown",
-              commit: {
-                id: "Unknown",
-                message: "Unknown",
-                date: new Date().toISOString()
-              },
-              recentCommits: []
-            },
-            user: {
-              name: "Unknown",
-              email: "Unknown"
-            },
-            environment: {
-              os: "Unknown",
-              nodeVersion: "Unknown",
-              appVersion: "1.0.0",
-              timestamp: new Date().toISOString()
-            }
-          };
+          console.error(`Error processing digit ${digit}:`, error);
+          // Continue with next digit
         }
-      }
-      
-      // Load metadata
-      const gitMetadata = loadMetadataSync();
-      console.log('Loaded metadata:', gitMetadata);
-      
-      // Extract repository and user information from the fetched metadata
-      const repoInfo = gitMetadata.repository || {};
-      const userInfo = gitMetadata.user || {};
-      
-      // Get environment information with Apple Silicon detection
-      console.log('Getting environment information');
-      const cpuInfo = detectAppleSilicon();
-      console.log('Apple Silicon detection results:', cpuInfo);
-      
-      // Note: User-Agent strings on Apple Silicon Macs still show "Intel Mac OS X" for compatibility
-      // So we rely on our detection methods instead of the UA string
-      const envInfo = {
-        os: navigator.platform || "Unknown",
-        cpuArchitecture: cpuInfo.isAppleSilicon ? "Apple Silicon" : "Intel",
-        detectionConfidence: cpuInfo.confidence,
-        detectionDetails: cpuInfo.details,
-        userAgent: navigator.userAgent || "Unknown",
-        // Add a note about the User-Agent string limitation
-        userAgentNote: "Note: User-Agent strings on Apple Silicon Macs still show 'Intel Mac OS X' for compatibility reasons",
-        appVersion: "1.0.0", // Application version
-        timestamp: new Date().toISOString()
-      };
-      console.log('Environment information:', envInfo);
-      
-      // Calculate file checksums
-      console.log('Calculating file checksums');
-      const fileIntegrity = {
-        checksumAlgorithm: "SHA-256",
-        files: {}
-      };
-      
-      // In a browser environment, we can't calculate cryptographic checksums
-      // So we'll use a simple hash function for demonstration purposes
-      const simpleHash = (str) => {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash; // Convert to 32bit integer
-        }
-        return hash.toString(16).padStart(8, '0');
-      };
-      
-      for (const digit of digits) {
-        const filename = getFilename(digit, format);
-        // Use the digit and format to create a deterministic hash
-        fileIntegrity.files[filename] = simpleHash(`${digit}-${format}-${new Date().toISOString()}`);
-      }
-      console.log('File checksums created');
-      
-      // Create processing information
-      const processingInfo = {
-        startTime: new Date(Date.now() - 5000).toISOString(), // 5 seconds ago
-        endTime: new Date().toISOString(),
-        duration: "5s", // Simulated duration
-        successCount: successfulDigits.length,
-        warningsCount: 0,
-        errorsCount: 0
-      };
-      console.log('Processing information:', processingInfo);
-      
-      // Extract common metadata from the first digit's metadata
-      // This will be used as the common metadata for all digits
-      const commonMetadata = successfulDigits.length > 0 ? successfulDigits[0] : {};
-      
-      // Extract the common properties that are the same for all digits
-      const commonProperties = {
-        appearance: commonMetadata.appearance || {},
-        generator: commonMetadata.generator || {},
-        displayType: commonMetadata.content?.displayType || "7-segment"
-      };
-      
-      // Create simplified digit entries with only digit-specific information
-      const simplifiedDigits = successfulDigits.map(digitMetadata => {
-        return {
-          digit: digitMetadata.digit,
-          export: digitMetadata.export
-        };
-      });
-      
-      // After all digits are processed, create the GeneratedDigits.json file with enhanced metadata
-      if (successfulDigits.length > 0) {
-        console.log(`Creating GeneratedDigits.json with ${successfulDigits.length} entries and enhanced metadata`);
-        const generatedDigitsJson = JSON.stringify({
-          metadata: {
-            timestamp: new Date().toISOString(),
-            repository: repoInfo,
-            user: userInfo,
-            environment: envInfo,
-            processing: processingInfo,
-            fileIntegrity: fileIntegrity,
-            ...commonProperties
-          },
-          digits: simplifiedDigits
-        }, null, 2);
-        zip.file('GeneratedDigits.json', generatedDigitsJson);
-        console.log('Added GeneratedDigits.json with enhanced metadata to ZIP');
       }
       
       // Restore the original digit display

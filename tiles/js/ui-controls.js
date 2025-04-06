@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const innerShadowEffectToggle = document.getElementById('inner-shadow-effect');
   
   // Color pickers and text inputs
+  const numberOutlineColorPicker = document.getElementById('number-outline-color');
+  const numberOutlineColorText = document.getElementById('number-outline-color-text');
   const unplayedColorPicker = document.getElementById('unplayed-color');
   const unplayedColorText = document.getElementById('unplayed-color-text');
   const revealedColorPicker = document.getElementById('revealed-color');
@@ -90,6 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         borderColor: borderColorPicker.value,
         highlightColor: highlightColorPicker.value,
         shadowColor: shadowColorPicker.value,
+        numberOutlineColor: numberOutlineColorPicker.value,
         number1Color: number1ColorPicker.value,
         number2Color: number2ColorPicker.value,
         number3Color: number3ColorPicker.value,
@@ -212,6 +215,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (/^#[0-9A-F]{6}$/i.test(color)) {
       shadowColorPicker.value = color;
       display.setOption('shadowColor', color);
+    }
+  });
+  
+  // Number outline color
+  numberOutlineColorPicker.addEventListener('input', (e) => {
+    const color = e.target.value;
+    numberOutlineColorText.value = color;
+    display.setOption('numberOutlineColor', color);
+  });
+  
+  numberOutlineColorText.addEventListener('input', (e) => {
+    const color = e.target.value;
+    // Only update if it's a valid color
+    if (/^#[0-9A-F]{6}$/i.test(color)) {
+      numberOutlineColorPicker.value = color;
+      display.setOption('numberOutlineColor', color);
     }
   });
   
@@ -490,6 +509,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     highlightColorText,
     shadowColorPicker,
     shadowColorText,
+    numberOutlineColorPicker,
+    numberOutlineColorText,
     number1ColorPicker,
     number2ColorPicker,
     number3ColorPicker,

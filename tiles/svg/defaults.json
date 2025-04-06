@@ -9,6 +9,7 @@
     "borderColor": "#2c3e50",
     "highlightColor": "#ffffff",
     "shadowColor": "#2c3e50",
+    "numberOutlineColor": "#ffffff",
     "number1Color": "#0000FF",
     "number2Color": "#008000",
     "number3Color": "#FF0000",

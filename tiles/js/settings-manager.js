@@ -42,6 +42,7 @@ function generateMetadata(display) {
       borderColor: display.options.borderColor,
       highlightColor: display.options.highlightColor,
       shadowColor: display.options.shadowColor,
+      numberOutlineColor: display.options.numberOutlineColor,
       number1Color: display.options.number1Color,
       number2Color: display.options.number2Color,
       number3Color: display.options.number3Color,
@@ -133,6 +134,11 @@ function updateControlsFromSettings(metadata, controls) {
     if (appearance.shadowColor) {
       controls.shadowColorPicker.value = appearance.shadowColor;
       controls.shadowColorText.value = appearance.shadowColor;
+    }
+    
+    if (appearance.numberOutlineColor) {
+      controls.numberOutlineColorPicker.value = appearance.numberOutlineColor;
+      controls.numberOutlineColorText.value = appearance.numberOutlineColor;
     }
     
     // Update number colors

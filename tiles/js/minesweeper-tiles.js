@@ -15,6 +15,7 @@ class MinesweeperTileDisplay {
       borderColor: options.borderColor || '#2c3e50',
       highlightColor: options.highlightColor || '#ffffff',
       shadowColor: options.shadowColor || '#2c3e50',
+      numberOutlineColor: options.numberOutlineColor || '#ffffff',
       number1Color: options.number1Color || '#0000FF',
       number2Color: options.number2Color || '#008000',
       number3Color: options.number3Color || '#FF0000',
@@ -255,6 +256,8 @@ class MinesweeperTileDisplay {
           text-anchor="middle"
           dominant-baseline="central"
           fill="${this.options[`number${i}Color`]}"
+          stroke="${this.options.numberOutlineColor}"
+          stroke-width="1"
         >
           ${i}
         </text>
@@ -351,6 +354,7 @@ class MinesweeperTileDisplay {
     this.element.style.setProperty('--border-color', this.options.borderColor);
     this.element.style.setProperty('--highlight-color', this.options.highlightColor);
     this.element.style.setProperty('--shadow-color', this.options.shadowColor);
+    this.element.style.setProperty('--number-outline-color', this.options.numberOutlineColor);
     this.element.style.setProperty('--number-1-color', this.options.number1Color);
     this.element.style.setProperty('--number-2-color', this.options.number2Color);
     this.element.style.setProperty('--number-3-color', this.options.number3Color);
@@ -467,6 +471,14 @@ class MinesweeperTileDisplay {
         line.setAttribute('stroke', this.options.wrongGuessColor);
       });
     }
+    
+    // Update number outlines
+    for (let i = 1; i <= 8; i++) {
+      const numberText = this.element.querySelector(`.number-${i} text`);
+      if (numberText) {
+        numberText.setAttribute('stroke', this.options.numberOutlineColor);
+      }
+    }
   }
   
   /**
@@ -523,6 +535,7 @@ class MinesweeperTileDisplay {
         <borderColor>${this.options.borderColor}</borderColor>
         <highlightColor>${this.options.highlightColor}</highlightColor>
         <shadowColor>${this.options.shadowColor}</shadowColor>
+        <numberOutlineColor>${this.options.numberOutlineColor}</numberOutlineColor>
         <number1Color>${this.options.number1Color}</number1Color>
         <number2Color>${this.options.number2Color}</number2Color>
         <number3Color>${this.options.number3Color}</number3Color>

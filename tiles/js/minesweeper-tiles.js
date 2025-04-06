@@ -353,17 +353,19 @@ class MinesweeperTileDisplay {
       <!-- Smiley Face Circle -->
       <circle cx="50" cy="50" r="25" fill="#FFDE00" stroke="#000000" stroke-width="1" />
       
-      <!-- Sunglasses -->
-      <rect x="30" y="35" width="40" height="12" rx="2" ry="2" fill="#000000" />
-      <rect x="30" y="35" width="15" height="10" rx="2" ry="2" fill="#000000" />
-      <rect x="55" y="35" width="15" height="10" rx="2" ry="2" fill="#000000" />
+      <!-- Sunglasses - Round Lenses -->
+      <circle cx="40" cy="40" r="7" fill="#000000" /> <!-- Left lens -->
+      <circle cx="60" cy="40" r="7" fill="#000000" /> <!-- Right lens -->
+      <line x1="47" y1="40" x2="53" y2="40" stroke="#000000" stroke-width="2" /> <!-- Bridge -->
+      <line x1="33" y1="40" x2="30" y2="38" stroke="#000000" stroke-width="2" /> <!-- Left arm -->
+      <line x1="67" y1="40" x2="70" y2="38" stroke="#000000" stroke-width="2" /> <!-- Right arm -->
       
       <!-- Sunglasses Reflection -->
-      <line x1="33" y1="38" x2="36" y2="38" stroke="#FFFFFF" stroke-width="1.5" />
-      <line x1="58" y1="38" x2="61" y2="38" stroke="#FFFFFF" stroke-width="1.5" />
+      <path d="M37,37 L39,39" stroke="#FFFFFF" stroke-width="1.5" /> <!-- Left lens reflection -->
+      <path d="M57,37 L59,39" stroke="#FFFFFF" stroke-width="1.5" /> <!-- Right lens reflection -->
       
       <!-- Smile -->
-      <path d="M35,60 Q50,70 65,60" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
+      <path d="M35,55 Q50,70 65,55" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" />
     `;
     this.element.appendChild(smileyCoolElement);
     

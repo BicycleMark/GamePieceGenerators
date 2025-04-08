@@ -339,12 +339,16 @@ class UIControls {
       this.elements.materialType.innerHTML = '';
       
       // Add options from settings manager
-      this.settingsManager.materials.forEach(material => {
-        const option = document.createElement('option');
-        option.value = material.id;
-        option.textContent = material.name;
-        this.elements.materialType.appendChild(option);
-      });
+      if (this.settingsManager.materials && Array.isArray(this.settingsManager.materials)) {
+        this.settingsManager.materials.forEach(material => {
+          const option = document.createElement('option');
+          option.value = material.id;
+          option.textContent = material.name;
+          this.elements.materialType.appendChild(option);
+        });
+      } else {
+        console.error('Materials array not found or not an array in settings manager');
+      }
     }
     
     // Populate pip styles
@@ -353,22 +357,40 @@ class UIControls {
       this.elements.pipStyle.innerHTML = '';
       
       // Add options from settings manager
-      this.settingsManager.pipStyles.forEach(style => {
-        const option = document.createElement('option');
-        option.value = style.id;
-        option.textContent = style.name;
-        this.elements.pipStyle.appendChild(option);
-      });
+      if (this.settingsManager.pipStyles && Array.isArray(this.settingsManager.pipStyles)) {
+        this.settingsManager.pipStyles.forEach(style => {
+          const option = document.createElement('option');
+          option.value = style.id;
+          option.textContent = style.name;
+          this.elements.pipStyle.appendChild(option);
+        });
+      } else {
+        console.error('Pip styles array not found or not an array in settings manager');
+      }
     }
     
     // Populate color schemes
     if (this.elements.colorSchemeSelect) {
-      Object.keys(this.settingsManager.colorSchemes).forEach(scheme => {
-        const option = document.createElement('option');
-        option.value = scheme;
-        option.textContent = scheme.charAt(0).toUpperCase() + scheme.slice(1);
-        this.elements.colorSchemeSelect.appendChild(option);
-      });
+      // Clear existing options first
+      this.elements.colorSchemeSelect.innerHTML = '';
+      
+      // Add default "Custom" option
+      const customOption = document.createElement('option');
+      customOption.value = "";
+      customOption.textContent = "Custom";
+      this.elements.colorSchemeSelect.appendChild(customOption);
+      
+      // Add options from settings manager
+      if (this.settingsManager.colorSchemes && typeof this.settingsManager.colorSchemes === 'object') {
+        Object.keys(this.settingsManager.colorSchemes).forEach(scheme => {
+          const option = document.createElement('option');
+          option.value = scheme;
+          option.textContent = scheme.charAt(0).toUpperCase() + scheme.slice(1);
+          this.elements.colorSchemeSelect.appendChild(option);
+        });
+      } else {
+        console.error('Color schemes object not found or not an object in settings manager');
+      }
     }
     
     // Populate presets
@@ -746,18 +768,24 @@ class UIControls {
     const presets = this.settingsManager.getPresets();
     
     // Add presets to list
-    presets.forEach(preset => {
-      const presetItem = document.createElement('div');
-      presetItem.className = 'preset-item';
-      presetItem.textContent = preset.name;
-      
-      // Add click event to load preset
-      presetItem.addEventListener('click', () => {
-        this.loadPreset(preset.name);
+    if (presets && Array.isArray(presets)) {
+      presets.forEach(preset => {
+        if (preset && typeof preset === 'object' && preset.name) {
+          const presetItem = document.createElement('div');
+          presetItem.className = 'preset-item';
+          presetItem.textContent = preset.name;
+          
+          // Add click event to load preset
+          presetItem.addEventListener('click', () => {
+            this.loadPreset(preset.name);
+          });
+          
+          this.elements.presetsList.appendChild(presetItem);
+        }
       });
-      
-      this.elements.presetsList.appendChild(presetItem);
-    });
+    } else {
+      console.error('Presets array not found or not an array in settings manager');
+    }
   }
   
   /**

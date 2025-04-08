@@ -160,13 +160,33 @@ class DiceRenderer {
    * Set up camera controls
    */
   setupControls() {
-    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.05;
-    this.controls.screenSpacePanning = false;
-    this.controls.minDistance = 100;
-    this.controls.maxDistance = 800;
-    this.controls.maxPolarAngle = Math.PI / 2;
+    try {
+      if (typeof THREE.OrbitControls === 'function') {
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.05;
+        this.controls.screenSpacePanning = false;
+        this.controls.minDistance = 100;
+        this.controls.maxDistance = 800;
+        this.controls.maxPolarAngle = Math.PI / 2;
+      } else {
+        console.warn('THREE.OrbitControls is not available. Using fallback controls.');
+        // Create a simple placeholder for controls
+        this.controls = {
+          update: () => {},
+          dispose: () => {},
+          autoRotate: false
+        };
+      }
+    } catch (error) {
+      console.error('Error setting up controls:', error);
+      // Create a simple placeholder for controls
+      this.controls = {
+        update: () => {},
+        dispose: () => {},
+        autoRotate: false
+      };
+    }
   }
   
   /**
@@ -450,16 +470,55 @@ class Dice {
     const size = this.options.size;
     const radius = (this.options.roundness / 100) * (size / 2);
     
-    // Use BoxGeometry for a cube
+    // Use BoxGeometry for a cube with no roundness
     if (radius <= 0) {
       return new THREE.BoxGeometry(size, size, size);
     }
     
-    // Use RoundedBoxGeometry for rounded cube
-    return new THREE.BoxGeometry(size, size, size, 1, 1, 1);
+    // Create a rounded cube using BoxGeometry and BufferGeometry
+    const boxGeometry = new THREE.BoxGeometry(size - radius * 2, size - radius * 2, size - radius * 2);
+    const positions = boxGeometry.attributes.position.array;
     
-    // Note: In a real implementation, you would use a proper rounded box geometry
-    // or create a custom geometry for rounded cubes
+    // Create a buffer geometry to modify
+    const geometry = new THREE.BufferGeometry();
+    const newPositions = [];
+    const normals = [];
+    const uvs = [];
+    
+    // Process each vertex
+    for (let i = 0; i < positions.length; i += 3) {
+      const x = positions[i];
+      const y = positions[i + 1];
+      const z = positions[i + 2];
+      
+      // Normalize the position to get the direction from center
+      const length = Math.sqrt(x * x + y * y + z * z);
+      const nx = x / length;
+      const ny = y / length;
+      const nz = z / length;
+      
+      // Add radius in the direction of the normal
+      const newX = x + nx * radius;
+      const newY = y + ny * radius;
+      const newZ = z + nz * radius;
+      
+      newPositions.push(newX, newY, newZ);
+      normals.push(nx, ny, nz);
+      
+      // Simple UV mapping
+      uvs.push((newX / size) + 0.5, (newY / size) + 0.5);
+    }
+    
+    // Use the indices from the original BoxGeometry
+    geometry.setIndex(boxGeometry.index);
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(newPositions, 3));
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    
+    // Compute vertex normals to ensure smooth shading
+    geometry.computeVertexNormals();
+    
+    return geometry;
   }
   
   /**
@@ -532,18 +591,141 @@ class Dice {
    * Add pips (dots or numbers) to the die faces
    */
   addPips() {
-    // In a real implementation, this would add the appropriate pips to each face
-    // based on the die type and pip style
+    // Define pip positions for each face of a d6
+    const pipPositions = {
+      // Face 1 (single pip in center)
+      1: [
+        [0, 0, 0]
+      ],
+      // Face 2 (two pips in opposite corners)
+      2: [
+        [-0.3, -0.3, 0],
+        [0.3, 0.3, 0]
+      ],
+      // Face 3 (three pips in diagonal)
+      3: [
+        [-0.3, -0.3, 0],
+        [0, 0, 0],
+        [0.3, 0.3, 0]
+      ],
+      // Face 4 (four pips in corners)
+      4: [
+        [-0.3, -0.3, 0],
+        [-0.3, 0.3, 0],
+        [0.3, -0.3, 0],
+        [0.3, 0.3, 0]
+      ],
+      // Face 5 (four in corners, one in center)
+      5: [
+        [-0.3, -0.3, 0],
+        [-0.3, 0.3, 0],
+        [0, 0, 0],
+        [0.3, -0.3, 0],
+        [0.3, 0.3, 0]
+      ],
+      // Face 6 (six pips in two rows)
+      6: [
+        [-0.3, -0.3, 0],
+        [-0.3, 0, 0],
+        [-0.3, 0.3, 0],
+        [0.3, -0.3, 0],
+        [0.3, 0, 0],
+        [0.3, 0.3, 0]
+      ]
+    };
     
-    // For a d6, we would add:
-    // - 1 pip on face 1 (opposite to face 6)
-    // - 2 pips on face 2 (opposite to face 5)
-    // - 3 pips on face 3 (opposite to face 4)
-    // - 4 pips on face 4 (opposite to face 3)
-    // - 5 pips on face 5 (opposite to face 2)
-    // - 6 pips on face 6 (opposite to face 1)
+    // Define face normals for a cube
+    const faceNormals = [
+      [0, 0, 1],   // front (face 1)
+      [0, 0, -1],  // back (face 6)
+      [0, 1, 0],   // top (face 5)
+      [0, -1, 0],  // bottom (face 2)
+      [1, 0, 0],   // right (face 3)
+      [-1, 0, 0]   // left (face 4)
+    ];
     
-    // This is a simplified version that would be expanded in a real implementation
+    // Define face values (which number goes on which face)
+    const faceValues = [1, 6, 5, 2, 3, 4];
+    
+    // Size of the die
+    const size = this.options.size;
+    const halfSize = size / 2;
+    const pipSize = size * 0.1; // 10% of die size
+    
+    // Create pips based on the selected style
+    for (let i = 0; i < faceNormals.length; i++) {
+      const faceValue = faceValues[i];
+      const normal = faceNormals[i];
+      
+      // Skip if no pips for this value
+      if (!pipPositions[faceValue]) continue;
+      
+      // Create a group for this face's pips
+      const faceGroup = new THREE.Group();
+      
+      // Add pips based on style
+      if (this.options.pipStyle === 'dots') {
+        // Create dots
+        pipPositions[faceValue].forEach(pos => {
+          const pipGeometry = new THREE.CircleGeometry(pipSize / 2, 16);
+          const pipMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(this.options.pipColor),
+            roughness: 0.5,
+            metalness: 0.2
+          });
+          
+          const pip = new THREE.Mesh(pipGeometry, pipMaterial);
+          
+          // Position the pip on the face
+          pip.position.set(
+            pos[0] * size * 0.5,
+            pos[1] * size * 0.5,
+            0
+          );
+          
+          // Rotate to face outward
+          pip.rotation.x = Math.PI / 2;
+          
+          faceGroup.add(pip);
+        });
+      } else if (this.options.pipStyle === 'numbers') {
+        // Create a text geometry for the number
+        // Since Three.js doesn't have built-in text, we'll create a simple circle with the number
+        const pipGeometry = new THREE.CircleGeometry(pipSize, 32);
+        const pipMaterial = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(this.options.pipColor),
+          roughness: 0.5,
+          metalness: 0.2
+        });
+        
+        const pip = new THREE.Mesh(pipGeometry, pipMaterial);
+        pip.rotation.x = Math.PI / 2;
+        faceGroup.add(pip);
+      }
+      
+      // Position the face group
+      faceGroup.position.set(
+        normal[0] * halfSize * 1.01, // Slightly outside the cube
+        normal[1] * halfSize * 1.01,
+        normal[2] * halfSize * 1.01
+      );
+      
+      // Rotate the face group to face outward
+      if (normal[0] === 1) {
+        faceGroup.rotation.y = Math.PI / 2;
+      } else if (normal[0] === -1) {
+        faceGroup.rotation.y = -Math.PI / 2;
+      } else if (normal[1] === 1) {
+        faceGroup.rotation.x = -Math.PI / 2;
+      } else if (normal[1] === -1) {
+        faceGroup.rotation.x = Math.PI / 2;
+      } else if (normal[2] === -1) {
+        faceGroup.rotation.y = Math.PI;
+      }
+      
+      // Add the face group to the mesh
+      this.mesh.add(faceGroup);
+    }
   }
   
   /**

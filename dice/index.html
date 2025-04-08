@@ -241,9 +241,31 @@
       // Initialize settings manager
       const settingsManager = new SettingsManager();
       
-      // Initialize dice renderer
-      const container = document.getElementById('dice-canvas');
-      const diceRenderer = new DiceRenderer(container);
+      let diceRenderer = null;
+      
+      try {
+        // Initialize dice renderer
+        const container = document.getElementById('dice-canvas');
+        diceRenderer = new DiceRenderer(container);
+      } catch (error) {
+        console.error('Error initializing dice renderer:', error);
+        // Create a placeholder for the dice renderer
+        diceRenderer = {
+          dice: [],
+          camera: { position: { set: () => {} }, lookAt: () => {} },
+          controls: { autoRotate: false },
+          ambientLight: { intensity: 0 },
+          directionalLight: { intensity: 0, castShadow: false },
+          frontLight: { intensity: 0 },
+          renderer: { shadowMap: { enabled: false } },
+          rollDice: () => {},
+          stopAnimation: () => {},
+          clearDice: () => {},
+          createDie: () => {},
+          exportImage: () => {},
+          exportAnimatedGIF: () => Promise.resolve('')
+        };
+      }
       
       // Initialize UI controls
       const uiControls = new UIControls(diceRenderer, settingsManager);
@@ -254,6 +276,12 @@
         diceRenderer,
         uiControls
       };
+      
+      // Force population of dropdowns
+      if (uiControls) {
+        console.log('Forcing population of dropdowns...');
+        uiControls.populateSelectOptions();
+      }
     });
   </script>
 </body>

@@ -129,7 +129,7 @@ Once GitHub Pages is enabled, the deployment is handled automatically by the wor
 - Runs on pushes to the `main` branch
 - Sets up Node.js and installs dependencies
 - Runs tests to ensure everything is working
-- Builds the site using Jekyll (which works well with static HTML/CSS/JS sites)
+- Uploads the site directly without any build process
 - Deploys the built site to GitHub Pages
 
 If you need to modify the deployment process, you can edit the workflow file.

@@ -111,22 +111,26 @@ This project is automatically deployed to GitHub Pages using GitHub Actions. Whe
 
 You can access the deployed site at: https://bicyclemark.github.io/GamePieceGenerators/
 
+### Initial Setup (Required)
+
+**Before the first deployment**, you must manually enable GitHub Pages in your repository settings:
+
+1. Go to your repository on GitHub
+2. Navigate to Settings > Pages
+3. Under "Build and deployment" > "Source", select "GitHub Actions"
+4. Click "Save"
+
+This is a one-time setup that must be completed before the GitHub Actions workflow can successfully deploy your site.
+
 ### GitHub Actions Workflow
 
-The deployment is handled by the workflow defined in `.github/workflows/deploy.yml`. This workflow:
+Once GitHub Pages is enabled, the deployment is handled automatically by the workflow defined in `.github/workflows/deploy.yml`. This workflow:
 
 - Runs on pushes to the `main` branch
 - Sets up Node.js and installs dependencies
 - Runs tests to ensure everything is working
-- Deploys the site to GitHub Pages
-
-**Important:** Before the workflow can successfully deploy the site, you need to manually enable GitHub Pages in the repository settings:
-
-1. Go to your repository on GitHub
-2. Navigate to Settings > Pages
-3. Under "Source", select "GitHub Actions"
-
-After enabling GitHub Pages, the workflow will be able to deploy the site automatically on future pushes to the `main` branch.
+- Builds the site using Jekyll (which works well with static HTML/CSS/JS sites)
+- Deploys the built site to GitHub Pages
 
 If you need to modify the deployment process, you can edit the workflow file.
 

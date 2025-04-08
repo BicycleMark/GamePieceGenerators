@@ -118,6 +118,11 @@
       color: white;
     }
     
+    .chess-header {
+      background-color: #2c3e50; /* Dark Blue */
+      color: white;
+    }
+    
     .card-body {
       padding: 1.5rem;
     }
@@ -180,6 +185,14 @@
       background-color: #703688; /* Darker purple */
     }
     
+    .chess-button {
+      background-color: #2c3e50; /* Dark Blue to match header */
+    }
+    
+    .chess-button:hover {
+      background-color: #1a2530; /* Darker blue */
+    }
+    
     .seven-segment-container {
       display: flex;
       gap: 10px;
@@ -238,6 +251,13 @@
     }
     
     .checker-pieces-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    
+    .chess-pieces-container {
       display: flex;
       gap: 15px;
       margin-bottom: 15px;

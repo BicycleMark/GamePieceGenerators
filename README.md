@@ -101,6 +101,27 @@ To add a new generator:
 5. Add export functionality
 6. Update this README.md to include your new generator
 
+## Deployment
+
+This project is automatically deployed to GitHub Pages using GitHub Actions. Whenever changes are pushed to the `main` branch, the following process occurs:
+
+1. GitHub Actions workflow is triggered
+2. Dependencies are installed and tests are run
+3. The site is built and deployed to GitHub Pages
+
+You can access the deployed site at: https://bicyclemark.github.io/GamePieceGenerators/
+
+### GitHub Actions Workflow
+
+The deployment is handled by the workflow defined in `.github/workflows/deploy.yml`. This workflow:
+
+- Runs on pushes to the `main` branch
+- Sets up Node.js and installs dependencies
+- Runs tests to ensure everything is working
+- Deploys the site to GitHub Pages
+
+If you need to modify the deployment process, you can edit the workflow file.
+
 ## License
 
 MIT License

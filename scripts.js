@@ -62,6 +62,60 @@ document.addEventListener('DOMContentLoaded', function() {
       tilesPreview.appendChild(tile);
     });
     
+    // Create the checker pieces preview
+    const checkersPreview = document.getElementById('checkers-preview');
+    
+    // Create checker pieces (red, red-king, black, black-king)
+    const createCheckerPiece = (color, isKing) => {
+      const pieceContainer = document.createElement('div');
+      pieceContainer.style.width = '60px';
+      pieceContainer.style.height = '60px';
+      pieceContainer.style.position = 'relative';
+      
+      const piece = document.createElement('div');
+      piece.style.width = '100%';
+      piece.style.height = '100%';
+      piece.style.borderRadius = '50%';
+      piece.style.position = 'relative';
+      
+      if (color === 'red') {
+        piece.style.backgroundColor = '#e74c3c';
+        piece.style.border = '3px solid #c0392b';
+        piece.style.boxShadow = 'inset 0 10px 15px rgba(255, 255, 255, 0.3), inset 0 -10px 15px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.2)';
+      } else {
+        piece.style.backgroundColor = '#2c3e50';
+        piece.style.border = '3px solid #1a2530';
+        piece.style.boxShadow = 'inset 0 10px 15px rgba(255, 255, 255, 0.2), inset 0 -10px 15px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2)';
+      }
+      
+      pieceContainer.appendChild(piece);
+      
+      if (isKing) {
+        const crown = document.createElement('div');
+        crown.style.position = 'absolute';
+        crown.style.top = '50%';
+        crown.style.left = '50%';
+        crown.style.transform = 'translate(-50%, -50%)';
+        crown.style.width = '30px';
+        crown.style.height = '15px';
+        crown.style.backgroundColor = '#f1c40f';
+        crown.style.clipPath = 'polygon(0% 100%, 20% 50%, 40% 100%, 60% 50%, 80% 100%, 100% 50%, 100% 100%)';
+        crown.style.zIndex = '2';
+        
+        piece.appendChild(crown);
+      }
+      
+      return pieceContainer;
+    };
+    
+    // Add the pieces to the preview
+    if (checkersPreview) {
+      checkersPreview.appendChild(createCheckerPiece('red', false));
+      checkersPreview.appendChild(createCheckerPiece('red', true));
+      checkersPreview.appendChild(createCheckerPiece('black', false));
+      checkersPreview.appendChild(createCheckerPiece('black', true));
+    }
+    
     // Add animation to cycle through different colors for the digits
     let colorIndex = 0;
     const digitColors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff', '#ffff00', '#00ffff'];
@@ -117,4 +171,58 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       document.getElementById('tile-shadow').textContent = shadowOn ? 'On' : 'Off';
     }, 3500);
+    
+    // Cycle through checker piece colors
+    let checkerColorIndex = 0;
+    const checkerColors = ['#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+    const checkerBorderColors = ['#c0392b', '#8e44ad', '#2980b9', '#27ae60'];
+    
+    setInterval(() => {
+      checkerColorIndex = (checkerColorIndex + 1) % checkerColors.length;
+      
+      if (checkersPreview) {
+        const redPieces = checkersPreview.querySelectorAll('div > div:first-child');
+        
+        redPieces.forEach((piece, index) => {
+          if (index % 2 === 0) { // Only update red pieces
+            piece.style.backgroundColor = checkerColors[checkerColorIndex];
+            piece.style.borderColor = checkerBorderColors[checkerColorIndex];
+          }
+        });
+      }
+      
+      const checkerColorElement = document.getElementById('checker-color');
+      if (checkerColorElement) {
+        checkerColorElement.textContent = checkerColors[checkerColorIndex];
+      }
+    }, 2800);
+    
+    // Cycle through crown colors
+    let crownColorIndex = 0;
+    const crownColors = ['#f1c40f', '#e67e22', '#f39c12', '#d35400'];
+    
+    setInterval(() => {
+      crownColorIndex = (crownColorIndex + 1) % crownColors.length;
+      
+      if (checkersPreview) {
+        const crowns = checkersPreview.querySelectorAll('div > div > div');
+        
+        crowns.forEach(crown => {
+          crown.style.backgroundColor = crownColors[crownColorIndex];
+        });
+      }
+      
+      let crownColorName;
+      switch (crownColorIndex) {
+        case 0: crownColorName = 'Gold'; break;
+        case 1: crownColorName = 'Orange'; break;
+        case 2: crownColorName = 'Amber'; break;
+        case 3: crownColorName = 'Bronze'; break;
+      }
+      
+      const checkerCrownElement = document.getElementById('checker-crown');
+      if (checkerCrownElement) {
+        checkerCrownElement.textContent = crownColorName;
+      }
+    }, 3200);
   });

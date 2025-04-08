@@ -1,0 +1,252 @@
+/**
+ * Styles for the Checker Pieces Generator
+ */
+
+:root {
+  /* Default colors */
+  --red-piece-color: #e74c3c;
+  --red-piece-border: #c0392b;
+  --black-piece-color: #2c3e50;
+  --black-piece-border: #1a2530;
+  --light-square-color: #f5deb3;
+  --dark-square-color: #8b4513;
+  --crown-color: #f1c40f;
+  --crown-border: #d4ac0d;
+  
+  /* Dimensions */
+  --piece-size: 80px;
+  --piece-border-width: 3px;
+  --board-square-size: 90px;
+  --crown-size: 40px;
+  
+  /* Effects */
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --glow-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Container for the checker board */
+.checker-board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--board-square-size));
+  grid-template-rows: repeat(8, var(--board-square-size));
+  gap: 0;
+  border: 5px solid #5d4037;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
+  max-width: calc(8 * var(--board-square-size));
+}
+
+/* Board squares */
+.board-square {
+  width: var(--board-square-size);
+  height: var(--board-square-size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.light-square {
+  background-color: var(--light-square-color);
+}
+
+.dark-square {
+  background-color: var(--dark-square-color);
+}
+
+/* Checker pieces */
+.checker-piece {
+  width: var(--piece-size);
+  height: var(--piece-size);
+  border-radius: 50%;
+  position: relative;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.checker-piece:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px var(--shadow-color);
+}
+
+/* Red pieces */
+.red-piece {
+  background-color: var(--red-piece-color);
+  border: var(--piece-border-width) solid var(--red-piece-border);
+  box-shadow: 
+    inset 0 10px 15px rgba(255, 255, 255, 0.3),
+    inset 0 -10px 15px rgba(0, 0, 0, 0.2),
+    0 5px 10px var(--shadow-color);
+}
+
+/* Black pieces */
+.black-piece {
+  background-color: var(--black-piece-color);
+  border: var(--piece-border-width) solid var(--black-piece-border);
+  box-shadow: 
+    inset 0 10px 15px rgba(255, 255, 255, 0.2),
+    inset 0 -10px 15px rgba(0, 0, 0, 0.3),
+    0 5px 10px var(--shadow-color);
+}
+
+/* Crown for king pieces */
+.crowned::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--crown-size);
+  height: var(--crown-size);
+  background-image: url('../samples/crown.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Crown styles for red and black pieces */
+.red-piece.crowned::after {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.black-piece.crowned::after {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* Generator controls */
+.generator-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.control-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.control-group h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.control-item {
+  margin-bottom: 15px;
+}
+
+.control-item label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.color-picker {
+  width: 100%;
+  height: 40px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.slider-control {
+  width: 100%;
+}
+
+/* Preview section */
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.preview-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.pieces-preview {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.piece-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.piece-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Export controls */
+.export-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.export-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.export-button:hover {
+  background-color: #45a049;
+}
+
+.export-button.secondary {
+  background-color: #2196F3;
+}
+
+.export-button.secondary:hover {
+  background-color: #0b7dda;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --piece-size: 60px;
+    --board-square-size: 70px;
+    --crown-size: 30px;
+  }
+  
+  .checker-board {
+    grid-template-columns: repeat(8, var(--board-square-size));
+    grid-template-rows: repeat(8, var(--board-square-size));
+  }
+  
+  .generator-controls {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --piece-size: 40px;
+    --board-square-size: 45px;
+    --crown-size: 20px;
+  }
+}

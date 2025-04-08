@@ -113,6 +113,11 @@
       color: white;
     }
     
+    .checkers-header {
+      background-color: #8e44ad; /* Purple */
+      color: white;
+    }
+    
     .card-body {
       padding: 1.5rem;
     }
@@ -165,6 +170,14 @@
     
     .tiles-button:hover {
       background-color: #2980b9; /* Darker blue */
+    }
+    
+    .checkers-button {
+      background-color: #8e44ad; /* Purple to match header */
+    }
+    
+    .checkers-button:hover {
+      background-color: #703688; /* Darker purple */
     }
     
     .seven-segment-container {
@@ -222,6 +235,13 @@
       gap: 10px;
       max-width: 300px;
       margin: 0 auto;
+    }
+    
+    .checker-pieces-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      justify-content: center;
     }
     
     .minesweeper-tile {

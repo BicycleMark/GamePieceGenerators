@@ -11,6 +11,11 @@ const mockTilesPreview = {
   appendChild: jest.fn()
 };
 
+const mockCheckersPreview = {
+  appendChild: jest.fn(),
+  querySelectorAll: jest.fn(() => [])
+};
+
 const mockDigitColor = {
   textContent: ''
 };
@@ -27,6 +32,14 @@ const mockTileShadow = {
   textContent: ''
 };
 
+const mockCheckerColor = {
+  textContent: ''
+};
+
+const mockCheckerCrown = {
+  textContent: ''
+};
+
 // Mock document.getElementById
 document.getElementById = jest.fn((id) => {
   switch (id) {
@@ -34,6 +47,8 @@ document.getElementById = jest.fn((id) => {
       return mockDigitsPreview;
     case 'tiles-preview':
       return mockTilesPreview;
+    case 'checkers-preview':
+      return mockCheckersPreview;
     case 'digit-color':
       return mockDigitColor;
     case 'digit-glow':
@@ -42,6 +57,10 @@ document.getElementById = jest.fn((id) => {
       return mockTileColor;
     case 'tile-shadow':
       return mockTileShadow;
+    case 'checker-color':
+      return mockCheckerColor;
+    case 'checker-crown':
+      return mockCheckerCrown;
     default:
       return null;
   }
@@ -289,7 +308,7 @@ describe('Main scripts.js functionality', () => {
   test('sets up animation intervals', () => {
     // Check that setInterval was called for animations
     expect(global.setInterval).toHaveBeenCalled();
-    expect(global.setInterval.mock.calls.length).toBeGreaterThanOrEqual(4); // 4 animations
+    expect(global.setInterval.mock.calls.length).toBeGreaterThanOrEqual(6); // 6 animations
     
     // Check interval durations
     const intervalDurations = global.setInterval.mock.calls.map(call => call[1]);
@@ -297,6 +316,8 @@ describe('Main scripts.js functionality', () => {
     expect(intervalDurations).toContain(3000); // Glow effect toggle
     expect(intervalDurations).toContain(2500); // Tile color cycling
     expect(intervalDurations).toContain(3500); // Shadow effect toggle
+    expect(intervalDurations).toContain(2800); // Checker piece color cycling
+    expect(intervalDurations).toContain(3200); // Crown color cycling
   });
   
   test('cycles through digit colors at correct interval', () => {

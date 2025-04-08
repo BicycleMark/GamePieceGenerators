@@ -6,9 +6,12 @@ on:
       - main  # Set this to your default branch
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
+  actions: write
+  deployments: write
+  statuses: write
 
 jobs:
   build-and-deploy:

@@ -220,7 +220,26 @@
   
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Make sure OrbitControls loads after Three.js is fully loaded -->
+  <script>
+    // Wait for Three.js to load
+    window.addEventListener('load', function() {
+      // Dynamically load OrbitControls
+      const script = document.createElement('script');
+      script.src = "https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/controls/OrbitControls.js";
+      script.onload = function() {
+        console.log('OrbitControls loaded successfully');
+        // Initialize the application after OrbitControls is loaded
+        initApp();
+      };
+      script.onerror = function() {
+        console.error('Failed to load OrbitControls');
+        // Initialize anyway with fallback
+        initApp();
+      };
+      document.head.appendChild(script);
+    });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/cannon@0.6.2/build/cannon.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
   
@@ -230,8 +249,8 @@
   <script src="js/ui-controls.js"></script>
   
   <script>
-    // Initialize the application when the DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
+    // Function to initialize the application
+    function initApp() {
       // Hide loading overlay when everything is loaded
       const loadingOverlay = document.getElementById('loading-overlay');
       if (loadingOverlay) {
@@ -282,6 +301,15 @@
         console.log('Forcing population of dropdowns...');
         uiControls.populateSelectOptions();
       }
+    }
+    
+    // Initialize the application when the DOM is loaded if not using the dynamic loading approach
+    document.addEventListener('DOMContentLoaded', () => {
+      // If OrbitControls is already loaded, initialize the app
+      if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'function') {
+        initApp();
+      }
+      // Otherwise, wait for the dynamic loading to complete
     });
   </script>
 </body>

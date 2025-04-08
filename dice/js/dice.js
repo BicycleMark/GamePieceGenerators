@@ -82,11 +82,11 @@ class DiceRenderer {
    * Set up scene lighting
    */
   setupLights() {
-    // Ambient light
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    // Ambient light - increase intensity for better overall illumination
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(this.ambientLight);
     
-    // Directional light (sun)
+    // Main directional light (sun)
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     this.directionalLight.position.set(100, 200, 100);
     this.directionalLight.castShadow = this.options.shadows;
@@ -101,14 +101,20 @@ class DiceRenderer {
       this.directionalLight.shadow.camera.right = 200;
       this.directionalLight.shadow.camera.top = 200;
       this.directionalLight.shadow.camera.bottom = -200;
+      this.directionalLight.shadow.bias = -0.0001; // Reduce shadow acne
     }
     
     this.scene.add(this.directionalLight);
     
-    // Add a soft light from the front
-    this.frontLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    // Add a soft light from the front - increase intensity for better visibility
+    this.frontLight = new THREE.DirectionalLight(0xffffff, 0.4);
     this.frontLight.position.set(0, 50, 200);
     this.scene.add(this.frontLight);
+    
+    // Add a fill light from the back for better 3D definition
+    this.backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    this.backLight.position.set(0, 100, -200);
+    this.scene.add(this.backLight);
   }
   
   /**
@@ -127,6 +133,11 @@ class DiceRenderer {
     this.floor.rotation.x = -Math.PI / 2;
     this.floor.position.y = -50;
     this.floor.receiveShadow = this.options.shadows;
+    
+    // Add a grid to help with visual reference
+    const gridHelper = new THREE.GridHelper(1000, 50, 0xcccccc, 0xcccccc);
+    gridHelper.position.y = -49.9; // Slightly above the floor to prevent z-fighting
+    this.scene.add(gridHelper);
     
     this.scene.add(this.floor);
   }
@@ -475,8 +486,13 @@ class Dice {
       return new THREE.BoxGeometry(size, size, size);
     }
     
-    // Create a rounded cube using BoxGeometry and BufferGeometry
-    const boxGeometry = new THREE.BoxGeometry(size - radius * 2, size - radius * 2, size - radius * 2);
+    // Create a rounded cube using BoxGeometry with more segments for smoother corners
+    const boxGeometry = new THREE.BoxGeometry(
+      size - radius * 2, 
+      size - radius * 2, 
+      size - radius * 2,
+      4, 4, 4 // More segments for smoother corners
+    );
     const positions = boxGeometry.attributes.position.array;
     
     // Create a buffer geometry to modify
@@ -493,9 +509,14 @@ class Dice {
       
       // Normalize the position to get the direction from center
       const length = Math.sqrt(x * x + y * y + z * z);
-      const nx = x / length;
-      const ny = y / length;
-      const nz = z / length;
+      let nx = 0, ny = 0, nz = 0;
+      
+      // Avoid division by zero
+      if (length > 0) {
+        nx = x / length;
+        ny = y / length;
+        nz = z / length;
+      }
       
       // Add radius in the direction of the normal
       const newX = x + nx * radius;
@@ -505,7 +526,7 @@ class Dice {
       newPositions.push(newX, newY, newZ);
       normals.push(nx, ny, nz);
       
-      // Simple UV mapping
+      // Better UV mapping for texture alignment
       uvs.push((newX / size) + 0.5, (newY / size) + 0.5);
     }
     
@@ -650,7 +671,8 @@ class Dice {
     // Size of the die
     const size = this.options.size;
     const halfSize = size / 2;
-    const pipSize = size * 0.1; // 10% of die size
+    const pipSize = size * 0.12; // Slightly larger pips (12% of die size)
+    const pipDepth = size * 0.02; // Give pips some depth for better visibility
     
     // Create pips based on the selected style
     for (let i = 0; i < faceNormals.length; i++) {
@@ -664,13 +686,22 @@ class Dice {
       const faceGroup = new THREE.Group();
       
       // Add pips based on style
-      if (this.options.pipStyle === 'dots') {
-        // Create dots
+      if (this.options.pipStyle === 'dots' || !this.options.pipStyle) {
+        // Create dots with some depth (use cylinders instead of flat circles)
         pipPositions[faceValue].forEach(pos => {
-          const pipGeometry = new THREE.CircleGeometry(pipSize / 2, 16);
+          // Create a short cylinder for 3D pips
+          const pipGeometry = new THREE.CylinderGeometry(
+            pipSize / 2,  // top radius
+            pipSize / 2,  // bottom radius
+            pipDepth,     // height
+            16,           // radial segments
+            1,            // height segments
+            false         // open ended
+          );
+          
           const pipMaterial = new THREE.MeshStandardMaterial({
             color: new THREE.Color(this.options.pipColor),
-            roughness: 0.5,
+            roughness: 0.3,
             metalness: 0.2
           });
           
@@ -680,34 +711,42 @@ class Dice {
           pip.position.set(
             pos[0] * size * 0.5,
             pos[1] * size * 0.5,
-            0
+            -pipDepth / 2  // Half inside, half outside the face
           );
           
-          // Rotate to face outward
+          // Rotate to align with face
           pip.rotation.x = Math.PI / 2;
           
           faceGroup.add(pip);
         });
       } else if (this.options.pipStyle === 'numbers') {
-        // Create a text geometry for the number
-        // Since Three.js doesn't have built-in text, we'll create a simple circle with the number
-        const pipGeometry = new THREE.CircleGeometry(pipSize, 32);
+        // For numbers, create a slightly recessed circle with a number
+        const pipGeometry = new THREE.CylinderGeometry(
+          pipSize * 0.8,  // top radius
+          pipSize * 0.8,  // bottom radius
+          pipDepth,       // height
+          32,             // radial segments
+          1,              // height segments
+          false           // open ended
+        );
+        
         const pipMaterial = new THREE.MeshStandardMaterial({
           color: new THREE.Color(this.options.pipColor),
-          roughness: 0.5,
+          roughness: 0.3,
           metalness: 0.2
         });
         
         const pip = new THREE.Mesh(pipGeometry, pipMaterial);
+        pip.position.set(0, 0, -pipDepth / 2);
         pip.rotation.x = Math.PI / 2;
         faceGroup.add(pip);
       }
       
       // Position the face group
       faceGroup.position.set(
-        normal[0] * halfSize * 1.01, // Slightly outside the cube
-        normal[1] * halfSize * 1.01,
-        normal[2] * halfSize * 1.01
+        normal[0] * (halfSize + 0.1), // Slightly outside the cube
+        normal[1] * (halfSize + 0.1),
+        normal[2] * (halfSize + 0.1)
       );
       
       // Rotate the face group to face outward

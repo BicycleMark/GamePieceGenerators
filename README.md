@@ -24,6 +24,18 @@ Located in the `/tiles` directory, this tool allows you to create customizable m
 - Save and load your settings
 - Real-time preview of changes
 
+### Checker Pieces Generator
+
+Located in the `/checkerpieces` directory, this tool allows you to create customizable checker pieces for games, UI elements, or other creative projects.
+
+- Generate SVG and PNG checker pieces
+- Customize colors, effects, and dimensions
+- Support for regular and crowned (king) pieces
+- Customizable board square colors
+- Export individual pieces or complete sets
+- Save and load your settings
+- Real-time preview of changes
+
 ## Usage
 
 Each generator is a standalone web application that can be opened directly in a browser. No server or build process is required.
@@ -42,6 +54,26 @@ Each generator is a standalone web application that can be opened directly in a 
 GamePieceGenerators/
 ├── .gitignore
 ├── README.md
+├── checkerpieces/
+│   ├── README.md
+│   ├── index.html
+│   ├── metadata.json
+│   ├── css/
+│   │   └── checker-pieces.css
+│   ├── js/
+│   │   ├── checker-pieces.js
+│   │   ├── settings-manager.js
+│   │   └── ui-controls.js
+│   ├── samples/
+│   │   ├── crown.svg
+│   │   ├── red-piece.svg
+│   │   ├── black-piece.svg
+│   │   ├── red-king.svg
+│   │   ├── black-king.svg
+│   │   ├── light-square.svg
+│   │   └── dark-square.svg
+│   └── svg/
+│       └── defaults.json
 ├── digits/
 │   ├── README.md
 │   ├── index.html

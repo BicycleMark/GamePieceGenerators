@@ -1,0 +1,32 @@
+{
+  "name": "gamepiecegenerators",
+  "version": "1.0.0",
+  "description": "A collection of web-based tools for generating customizable game pieces and UI elements for game development, UI design, or other creative projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "moduleFileExtensions": ["js", "json"],
+    "transform": {},
+    "testMatch": ["**/tests/**/*.test.js"],
+    "setupFiles": ["./tests/setup.js"]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BicycleMark/GamePieceGenerators.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BicycleMark/GamePieceGenerators/issues"
+  },
+  "homepage": "https://github.com/BicycleMark/GamePieceGenerators#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}

@@ -1,0 +1,133 @@
+:root {
+  /* Base colors */
+  --unplayed-color: #4a90e2;        /* Blue for unplayed tiles */
+  --revealed-color: #C0C0C0;         /* Gray for revealed tiles */
+  --border-color: #2c3e50;           /* Dark blue for borders */
+  --highlight-color: #ffffff;        /* White for highlights */
+  --shadow-color: #2c3e50;           /* Dark blue for shadows */
+  
+  /* Number colors (following standard minesweeper colors) */
+  --number-1-color: #0000FF;         /* Blue */
+  --number-2-color: #008000;         /* Green */
+  --number-3-color: #FF0000;         /* Red */
+  --number-4-color: #000080;         /* Dark Blue */
+  --number-5-color: #800000;         /* Dark Red */
+  --number-6-color: #008080;         /* Teal */
+  --number-7-color: #000000;         /* Black */
+  --number-8-color: #808080;         /* Gray */
+  
+  /* Special states */
+  --mine-color: #000000;             /* Black for mines */
+  --flag-color: #FF0000;             /* Red for flags */
+  --wrong-guess-color: #FF0000;      /* Red for wrong guesses */
+  
+  /* Dimensions */
+  --tile-size: 150px;                /* Size of the tile */
+  --border-width: 1px;               /* Border width */
+  --highlight-width: 2px;            /* Highlight line width */
+  
+  /* Effects */
+  --shadow-opacity: 0.8;             /* Opacity for shadows */
+  --highlight-opacity: 0.7;          /* Opacity for highlights */
+  --inner-shadow-blur: 1;            /* Blur for inner shadows */
+  --inner-shadow-offset: 2;          /* Offset for inner shadows */
+}
+
+.tile-container {
+  background-color: var(--revealed-color);
+  padding: 10px;
+  display: inline-block;
+  border-radius: 5px;
+  overflow: visible;
+}
+
+.minesweeper-tile {
+  display: inline-block;
+  margin: 0;
+  width: var(--tile-size);
+  height: var(--tile-size);
+}
+
+/* Hide all elements by default */
+.unplayed-tile, .pressed-tile, .revealed-tile, .number, .mine, .flag, .wrong-guess,
+.smiley-normal, .smiley-cool, .smiley-sad, .smiley-neutral, .smiley-tense {
+  display: none;
+}
+
+/* Tile state classes for static usage */
+.tile-unplayed .unplayed-tile { display: block; }
+
+.tile-pressed .pressed-tile { display: block; }
+
+.tile-flagged .unplayed-tile,
+.tile-flagged .flag { display: block; }
+
+.tile-revealed_mine .revealed-tile,
+.tile-revealed_mine .mine { display: block; }
+
+.tile-wrong_guess .revealed-tile,
+.tile-wrong_guess .mine,
+.tile-wrong_guess .wrong-guess { display: block; }
+
+.tile-neighbor_0 .revealed-tile { display: block; }
+
+.tile-neighbor_1 .revealed-tile,
+.tile-neighbor_1 .number-1 { display: block; }
+
+.tile-neighbor_2 .revealed-tile,
+.tile-neighbor_2 .number-2 { display: block; }
+
+.tile-neighbor_3 .revealed-tile,
+.tile-neighbor_3 .number-3 { display: block; }
+
+.tile-neighbor_4 .revealed-tile,
+.tile-neighbor_4 .number-4 { display: block; }
+
+.tile-neighbor_5 .revealed-tile,
+.tile-neighbor_5 .number-5 { display: block; }
+
+.tile-neighbor_6 .revealed-tile,
+.tile-neighbor_6 .number-6 { display: block; }
+
+.tile-neighbor_7 .revealed-tile,
+.tile-neighbor_7 .number-7 { display: block; }
+
+.tile-neighbor_8 .revealed-tile,
+.tile-neighbor_8 .number-8 { display: block; }
+
+/* New smiley tile states */
+.tile-smiley_normal .unplayed-tile,
+.tile-smiley_normal .smiley-normal { display: block; }
+
+.tile-smiley_cool .unplayed-tile,
+.tile-smiley_cool .smiley-cool { display: block; }
+
+.tile-smiley_sad .unplayed-tile,
+.tile-smiley_sad .smiley-sad { display: block; }
+
+.tile-smiley_neutral .unplayed-tile,
+.tile-smiley_neutral .smiley-neutral { display: block; }
+
+.tile-smiley_tense .pressed-tile,
+.tile-smiley_tense .smiley-tense { display: block; }
+
+/* Number colors */
+.number-1 { fill: var(--number-1-color); }
+.number-2 { fill: var(--number-2-color); }
+.number-3 { fill: var(--number-3-color); }
+.number-4 { fill: var(--number-4-color); }
+.number-5 { fill: var(--number-5-color); }
+.number-6 { fill: var(--number-6-color); }
+.number-7 { fill: var(--number-7-color); }
+.number-8 { fill: var(--number-8-color); }
+
+/* Special elements */
+.mine { fill: var(--mine-color); }
+.flag-pole { fill: var(--border-color); }
+.flag { fill: var(--flag-color); }
+.wrong-guess { fill: var(--wrong-guess-color); }
+
+/* Inner shadow effect */
+.inner-shadow-enabled .unplayed-tile {
+  filter: url(#innerShadow);
+}

@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-04-05T22:22:26.191Z",
+  "repository": {
+    "url": "https://github.com/BicycleMark/digits.git",
+    "branch": "main",
+    "commit": {
+      "id": "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
+      "message": "All done",
+      "date": "2025-04-05T17:10:58-05:00"
+    },
+    "tags": [],
+    "recentCommits": [
+      {
+        "id": "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
+        "message": "All done",
+        "date": "2025-04-05T17:10:58-05:00"
+      },
+      {
+        "id": "cc13bf1d24bc12ae5d03b82285c7ba5cbad7c65d",
+        "message": "before rolling up the data",
+        "date": "2025-04-05T16:56:13-05:00"
+      },
+      {
+        "id": "265b123659200af1e7e8f0606259cd14f7d69dee",
+        "message": "Removed unused files",
+        "date": "2025-04-05T16:20:13-05:00"
+      }
+    ]
+  },
+  "user": {
+    "name": "markwardell",
+    "email": "mark.d.wardell@gmail.com"
+  },
+  "environment": {
+    "os": "darwin",
+    "nodeVersion": "v23.11.0",
+    "cpuArchitecture": "Apple Silicon",
+    "isAppleSilicon": true,
+    "appVersion": "1.0.0",
+    "timestamp": "2025-04-05T22:22:26.347Z"
+  }
+}

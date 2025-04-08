@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-04-05T23:50:50.000Z",
+  "repository": {
+    "url": "https://github.com/BicycleMark/GamePieceGenerators.git",
+    "branch": "main",
+    "commit": {
+      "id": "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
+      "message": "Initial commit for tiles generator",
+      "date": "2025-04-05T18:50:50-05:00"
+    },
+    "tags": [],
+    "recentCommits": [
+      {
+        "id": "2a82e2ff986d0d24ef17c0a534048cc1d07ee0a4",
+        "message": "Initial commit for tiles generator",
+        "date": "2025-04-05T18:50:50-05:00"
+      }
+    ]
+  },
+  "user": {
+    "name": "markwardell",
+    "email": "mark.d.wardell@gmail.com"
+  },
+  "environment": {
+    "os": "darwin",
+    "nodeVersion": "v23.11.0",
+    "cpuArchitecture": "Apple Silicon",
+    "isAppleSilicon": true,
+    "appVersion": "1.0.0",
+    "timestamp": "2025-04-05T23:50:50.000Z"
+  }
+}

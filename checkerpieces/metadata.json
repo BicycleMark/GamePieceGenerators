@@ -1,0 +1,61 @@
+{
+  "name": "Checker Pieces Generator",
+  "version": "1.0.0",
+  "description": "Create customizable checker pieces for games, UI elements, or other creative projects.",
+  "author": "GamePieceGenerators",
+  "license": "MIT",
+  "features": [
+    "Generate SVG and PNG checker pieces",
+    "Customize colors, effects, and dimensions",
+    "Support for regular and crowned (king) pieces",
+    "Customizable board square colors",
+    "Export individual pieces or complete sets",
+    "Save and load your settings",
+    "Real-time preview of changes"
+  ],
+  "customizationOptions": {
+    "boardSettings": {
+      "lightSquareColor": "#f5deb3",
+      "darkSquareColor": "#8b4513",
+      "boardSize": [8, 10, 12],
+      "squareSize": "40-120px"
+    },
+    "pieceSettings": {
+      "redPieceColor": "#e74c3c",
+      "redPieceBorderColor": "#c0392b",
+      "blackPieceColor": "#2c3e50",
+      "blackPieceBorderColor": "#1a2530",
+      "pieceSize": "40-100px",
+      "borderWidth": "0-10px",
+      "is3D": true
+    },
+    "crownSettings": {
+      "crownColor": "#f1c40f",
+      "crownBorderColor": "#d4ac0d",
+      "crownStyle": ["classic", "star", "symbol"]
+    },
+    "effectsSettings": {
+      "glowEnabled": false,
+      "glowColor": "rgba(255, 255, 255, 0.7)",
+      "glowSize": "1-20px"
+    }
+  },
+  "exportOptions": [
+    "Individual pieces as SVG or PNG",
+    "Complete set as a ZIP file",
+    "Board as SVG",
+    "Settings as JSON"
+  ],
+  "dependencies": [],
+  "repository": "https://github.com/bicyclemark/GamePieceGenerators",
+  "homepage": "https://bicyclemark.github.io/GamePieceGenerators/checkerpieces/",
+  "keywords": [
+    "checkers",
+    "draughts",
+    "board game",
+    "game pieces",
+    "svg",
+    "generator",
+    "customizable"
+  ]
+}

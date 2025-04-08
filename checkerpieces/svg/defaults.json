@@ -1,0 +1,31 @@
+{
+  "boardSettings": {
+    "boardSize": 8,
+    "lightSquareColor": "#f5deb3",
+    "darkSquareColor": "#8b4513",
+    "squareSize": 90
+  },
+  "pieceSettings": {
+    "redPieceColor": "#e74c3c",
+    "redPieceBorderColor": "#c0392b",
+    "blackPieceColor": "#2c3e50",
+    "blackPieceBorderColor": "#1a2530",
+    "pieceSize": 80,
+    "borderWidth": 3,
+    "is3D": true
+  },
+  "crownSettings": {
+    "crownColor": "#f1c40f",
+    "crownBorderColor": "#d4ac0d",
+    "crownStyle": "classic"
+  },
+  "effectsSettings": {
+    "glowEnabled": false,
+    "glowColor": "rgba(255, 255, 255, 0.7)",
+    "glowSize": 10
+  },
+  "exportSettings": {
+    "exportScale": 2,
+    "exportFormat": "svg"
+  }
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checker Pieces Generator</title>
+  <link rel="stylesheet" href="css/checker-pieces.css">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    .description {
+      font-size: 1.1rem;
+      color: #555;
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    
+    @media (min-width: 992px) {
+      .main-content {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .section {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+      color: #2c3e50;
+      border-bottom: 2px solid #e74c3c;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #2c3e50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Checker Pieces Generator</h1>
+    <p class="description">
+      Create customizable checker pieces for games, UI elements, or other creative projects.
+      Customize colors, effects, and dimensions, then export as SVG or PNG.
+    </p>
+    <a href="../index.html" class="back-link">← Back to Game Piece Generators</a>
+  </header>
+  
+  <div class="main-content">
+    <div class="section">
+      <h2 class="section-title">Board Preview</h2>
+      <div id="board-container"></div>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">Piece Preview</h2>
+      <div id="preview-container"></div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">Customization Controls</h2>
+    <div id="controls-container"></div>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">Export Options</h2>
+    <div id="export-container"></div>
+  </div>
+  
+  <footer>
+    <p>
+      Checker Pieces Generator is part of the GamePieceGenerators collection.
+      Create and customize game pieces for your projects.
+    </p>
+    <p>
+      <a href="../index.html">Back to Home</a> |
+      <a href="https://github.com/bicyclemark/GamePieceGenerators" target="_blank">GitHub Repository</a>
+    </p>
+  </footer>
+  
+  <!-- SVG for crown icon -->
+  <div style="display: none;">
+    <svg id="crown-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <path d="M30,60 L35,40 L45,50 L50,35 L55,50 L65,40 L70,60 Z" fill="#f1c40f" stroke="#d4ac0d" stroke-width="1.5" />
+    </svg>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="js/checker-pieces.js"></script>
+  <script src="js/settings-manager.js"></script>
+  <script src="js/ui-controls.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the settings manager
+      const settingsManager = new SettingsManager('checkerpieces-settings');
+      
+      // Initialize the UI controls
+      const uiControls = new UIControls({
+        boardContainerId: 'board-container',
+        controlsContainerId: 'controls-container',
+        previewContainerId: 'preview-container',
+        exportContainerId: 'export-container',
+        settingsManager: settingsManager
+      });
+      
+      // Create a sample crown SVG for use in the pieces
+      const crownSvg = document.getElementById('crown-svg');
+      if (crownSvg) {
+        // Create a blob from the SVG
+        const svgString = new XMLSerializer().serializeToString(crownSvg);
+        const blob = new Blob([svgString], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        
+        // Create a sample crown image
+        const img = new Image();
+        img.src = url;
+        img.onload = function() {
+          // Create a canvas to draw the image
+          const canvas = document.createElement('canvas');
+          canvas.width = 100;
+          canvas.height = 100;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert to data URL
+          const dataUrl = canvas.toDataURL('image/svg+xml');
+          
+          // Save to localStorage for use in the pieces
+          localStorage.setItem('checkerpieces-crown-svg', dataUrl);
+          
+          // Clean up
+          URL.revokeObjectURL(url);
+        };
+      }
+    });
+  </script>
+</body>
+</html>

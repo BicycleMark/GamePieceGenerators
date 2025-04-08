@@ -1,0 +1,693 @@
+/**
+ * Dice Generator
+ * Core functionality for 3D dice rendering and physics simulation
+ */
+
+class DiceRenderer {
+  /**
+   * Initialize the dice renderer
+   * @param {HTMLElement} container - Container element for the renderer
+   * @param {Object} options - Renderer options
+   */
+  constructor(container, options = {}) {
+    this.container = container;
+    this.options = Object.assign({
+      width: container.clientWidth,
+      height: container.clientHeight,
+      antialias: true,
+      alpha: true,
+      shadows: true
+    }, options);
+    
+    this.dice = [];
+    this.isAnimating = false;
+    this.animationId = null;
+    
+    this.init();
+  }
+  
+  /**
+   * Initialize Three.js scene, camera, renderer, and physics
+   */
+  init() {
+    // Create scene
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xf0f0f0);
+    
+    // Create camera
+    this.camera = new THREE.PerspectiveCamera(
+      45, 
+      this.options.width / this.options.height, 
+      0.1, 
+      2000
+    );
+    this.camera.position.set(0, 200, 400);
+    this.camera.lookAt(0, 0, 0);
+    
+    // Create renderer
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: this.options.antialias,
+      alpha: this.options.alpha
+    });
+    this.renderer.setSize(this.options.width, this.options.height);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    
+    if (this.options.shadows) {
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    }
+    
+    this.container.appendChild(this.renderer.domElement);
+    
+    // Add lights
+    this.setupLights();
+    
+    // Add floor
+    this.setupFloor();
+    
+    // Setup physics
+    this.setupPhysics();
+    
+    // Setup controls
+    this.setupControls();
+    
+    // Handle window resize
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+    
+    // Start rendering
+    this.animate();
+  }
+  
+  /**
+   * Set up scene lighting
+   */
+  setupLights() {
+    // Ambient light
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    this.scene.add(this.ambientLight);
+    
+    // Directional light (sun)
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    this.directionalLight.position.set(100, 200, 100);
+    this.directionalLight.castShadow = this.options.shadows;
+    
+    // Configure shadow properties
+    if (this.options.shadows) {
+      this.directionalLight.shadow.mapSize.width = 2048;
+      this.directionalLight.shadow.mapSize.height = 2048;
+      this.directionalLight.shadow.camera.near = 0.5;
+      this.directionalLight.shadow.camera.far = 500;
+      this.directionalLight.shadow.camera.left = -200;
+      this.directionalLight.shadow.camera.right = 200;
+      this.directionalLight.shadow.camera.top = 200;
+      this.directionalLight.shadow.camera.bottom = -200;
+    }
+    
+    this.scene.add(this.directionalLight);
+    
+    // Add a soft light from the front
+    this.frontLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    this.frontLight.position.set(0, 50, 200);
+    this.scene.add(this.frontLight);
+  }
+  
+  /**
+   * Set up floor for dice to roll on
+   */
+  setupFloor() {
+    const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
+    const floorMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf0f0f0,
+      roughness: 0.8,
+      metalness: 0.2,
+      side: THREE.DoubleSide
+    });
+    
+    this.floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    this.floor.rotation.x = -Math.PI / 2;
+    this.floor.position.y = -50;
+    this.floor.receiveShadow = this.options.shadows;
+    
+    this.scene.add(this.floor);
+  }
+  
+  /**
+   * Set up physics simulation
+   */
+  setupPhysics() {
+    // Initialize physics world
+    this.world = new CANNON.World();
+    this.world.gravity.set(0, -9.82, 0);
+    this.world.broadphase = new CANNON.NaiveBroadphase();
+    this.world.solver.iterations = 10;
+    
+    // Create floor body
+    const floorShape = new CANNON.Plane();
+    const floorBody = new CANNON.Body({
+      mass: 0, // static body
+      shape: floorShape
+    });
+    floorBody.quaternion.setFromAxisAngle(
+      new CANNON.Vec3(1, 0, 0),
+      -Math.PI / 2
+    );
+    floorBody.position.set(0, -50, 0);
+    
+    this.world.addBody(floorBody);
+  }
+  
+  /**
+   * Set up camera controls
+   */
+  setupControls() {
+    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.05;
+    this.controls.screenSpacePanning = false;
+    this.controls.minDistance = 100;
+    this.controls.maxDistance = 800;
+    this.controls.maxPolarAngle = Math.PI / 2;
+  }
+  
+  /**
+   * Handle window resize
+   */
+  onWindowResize() {
+    const width = this.container.clientWidth;
+    const height = this.container.clientHeight;
+    
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    
+    this.renderer.setSize(width, height);
+  }
+  
+  /**
+   * Animation loop
+   */
+  animate() {
+    this.animationId = requestAnimationFrame(this.animate.bind(this));
+    
+    // Update physics
+    if (this.isAnimating) {
+      this.world.step(1 / 60);
+      
+      // Update dice positions based on physics
+      this.dice.forEach(die => {
+        die.updateFromPhysics();
+      });
+    }
+    
+    // Update controls
+    this.controls.update();
+    
+    // Render scene
+    this.renderer.render(this.scene, this.camera);
+  }
+  
+  /**
+   * Create a new die
+   * @param {Object} options - Die options
+   * @returns {Dice} The created die
+   */
+  createDie(options = {}) {
+    const die = new Dice(this, options);
+    this.dice.push(die);
+    return die;
+  }
+  
+  /**
+   * Remove a die from the scene
+   * @param {Dice} die - The die to remove
+   */
+  removeDie(die) {
+    const index = this.dice.indexOf(die);
+    if (index !== -1) {
+      die.remove();
+      this.dice.splice(index, 1);
+    }
+  }
+  
+  /**
+   * Clear all dice from the scene
+   */
+  clearDice() {
+    while (this.dice.length > 0) {
+      this.removeDie(this.dice[0]);
+    }
+  }
+  
+  /**
+   * Roll all dice
+   * @param {Object} options - Roll options
+   */
+  rollDice(options = {}) {
+    this.isAnimating = true;
+    
+    this.dice.forEach(die => {
+      die.roll(options);
+    });
+    
+    // Stop animation after a set time
+    if (options.duration) {
+      setTimeout(() => {
+        this.isAnimating = false;
+      }, options.duration);
+    }
+  }
+  
+  /**
+   * Stop all dice animation
+   */
+  stopAnimation() {
+    this.isAnimating = false;
+  }
+  
+  /**
+   * Dispose of the renderer and resources
+   */
+  dispose() {
+    this.stopAnimation();
+    cancelAnimationFrame(this.animationId);
+    
+    this.clearDice();
+    
+    this.renderer.dispose();
+    this.controls.dispose();
+    
+    window.removeEventListener('resize', this.onWindowResize);
+    
+    if (this.container.contains(this.renderer.domElement)) {
+      this.container.removeChild(this.renderer.domElement);
+    }
+  }
+  
+  /**
+   * Export the current view as an image
+   * @param {string} format - Export format ('png', 'jpg')
+   * @param {number} quality - Image quality (0-1)
+   * @returns {string} Data URL of the image
+   */
+  exportImage(format = 'png', quality = 0.9) {
+    // Render the scene
+    this.renderer.render(this.scene, this.camera);
+    
+    // Get the data URL
+    return this.renderer.domElement.toDataURL(`image/${format}`, quality);
+  }
+  
+  /**
+   * Export the current view as an animated GIF
+   * @param {Object} options - GIF options
+   * @returns {Promise<string>} Promise resolving to the GIF data URL
+   */
+  exportAnimatedGIF(options = {}) {
+    return new Promise((resolve, reject) => {
+      const defaults = {
+        frames: 24,
+        duration: 2000,
+        quality: 10,
+        width: 320,
+        height: 240
+      };
+      
+      const settings = Object.assign({}, defaults, options);
+      
+      // Create a GIF encoder
+      const gif = new GIF({
+        workers: 2,
+        quality: settings.quality,
+        width: settings.width,
+        height: settings.height,
+        workerScript: 'js/gif.worker.js'
+      });
+      
+      // Roll the dice
+      this.rollDice({ duration: settings.duration });
+      
+      // Calculate frame delay
+      const frameDelay = settings.duration / settings.frames;
+      
+      // Capture frames
+      let framesLeft = settings.frames;
+      
+      const captureFrame = () => {
+        // Render the scene
+        this.renderer.render(this.scene, this.camera);
+        
+        // Create a canvas with the desired dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = settings.width;
+        canvas.height = settings.height;
+        const context = canvas.getContext('2d');
+        
+        // Draw the renderer canvas to our sized canvas
+        context.drawImage(
+          this.renderer.domElement,
+          0, 0, this.renderer.domElement.width, this.renderer.domElement.height,
+          0, 0, settings.width, settings.height
+        );
+        
+        // Add the frame to the GIF
+        gif.addFrame(canvas, { delay: frameDelay, copy: true });
+        
+        framesLeft--;
+        
+        if (framesLeft > 0) {
+          setTimeout(captureFrame, frameDelay);
+        } else {
+          // Finish the GIF
+          gif.on('finished', blob => {
+            // Convert blob to data URL
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          
+          gif.render();
+        }
+      };
+      
+      // Start capturing frames
+      captureFrame();
+    });
+  }
+}
+
+class Dice {
+  /**
+   * Initialize a die
+   * @param {DiceRenderer} renderer - The dice renderer
+   * @param {Object} options - Die options
+   */
+  constructor(renderer, options = {}) {
+    this.renderer = renderer;
+    this.options = Object.assign({
+      type: 'd6',
+      size: 50,
+      position: { x: 0, y: 100, z: 0 },
+      color: 0xffffff,
+      material: 'plastic',
+      pipColor: 0x000000,
+      pipStyle: 'dots',
+      borderWidth: 2,
+      borderColor: 0xcccccc,
+      roundness: 10,
+      texture: 'smooth',
+      mass: 300,
+      friction: 0.8,
+      restitution: 0.3
+    }, options);
+    
+    this.mesh = null;
+    this.body = null;
+    this.value = 1;
+    
+    this.init();
+  }
+  
+  /**
+   * Initialize the die geometry, material, and physics
+   */
+  init() {
+    this.createMesh();
+    this.createPhysicsBody();
+    this.addToScene();
+  }
+  
+  /**
+   * Create the 3D mesh for the die
+   */
+  createMesh() {
+    let geometry;
+    
+    // Create geometry based on die type
+    switch (this.options.type) {
+      case 'd6':
+      default:
+        geometry = this.createD6Geometry();
+        break;
+    }
+    
+    // Create material
+    const material = this.createMaterial();
+    
+    // Create mesh
+    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh.castShadow = true;
+    this.mesh.receiveShadow = true;
+    
+    // Add pips
+    this.addPips();
+  }
+  
+  /**
+   * Create a d6 (cube) geometry
+   * @returns {THREE.BufferGeometry} The created geometry
+   */
+  createD6Geometry() {
+    const size = this.options.size;
+    const radius = (this.options.roundness / 100) * (size / 2);
+    
+    // Use BoxGeometry for a cube
+    if (radius <= 0) {
+      return new THREE.BoxGeometry(size, size, size);
+    }
+    
+    // Use RoundedBoxGeometry for rounded cube
+    return new THREE.BoxGeometry(size, size, size, 1, 1, 1);
+    
+    // Note: In a real implementation, you would use a proper rounded box geometry
+    // or create a custom geometry for rounded cubes
+  }
+  
+  /**
+   * Create material based on options
+   * @returns {THREE.Material} The created material
+   */
+  createMaterial() {
+    let material;
+    
+    // Base material properties
+    const materialProps = {
+      color: new THREE.Color(this.options.color),
+      side: THREE.DoubleSide
+    };
+    
+    // Create different materials based on the material type
+    switch (this.options.material) {
+      case 'metal':
+        material = new THREE.MeshStandardMaterial({
+          ...materialProps,
+          metalness: 0.8,
+          roughness: 0.2
+        });
+        break;
+        
+      case 'wood':
+        material = new THREE.MeshStandardMaterial({
+          ...materialProps,
+          metalness: 0.0,
+          roughness: 0.8
+        });
+        // Would add wood texture in a real implementation
+        break;
+        
+      case 'glass':
+        material = new THREE.MeshPhysicalMaterial({
+          ...materialProps,
+          transmission: 0.9,
+          opacity: 0.3,
+          metalness: 0.0,
+          roughness: 0.0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1
+        });
+        break;
+        
+      case 'marble':
+        material = new THREE.MeshStandardMaterial({
+          ...materialProps,
+          metalness: 0.0,
+          roughness: 0.3
+        });
+        // Would add marble texture in a real implementation
+        break;
+        
+      case 'plastic':
+      default:
+        material = new THREE.MeshStandardMaterial({
+          ...materialProps,
+          metalness: 0.0,
+          roughness: 0.5
+        });
+        break;
+    }
+    
+    return material;
+  }
+  
+  /**
+   * Add pips (dots or numbers) to the die faces
+   */
+  addPips() {
+    // In a real implementation, this would add the appropriate pips to each face
+    // based on the die type and pip style
+    
+    // For a d6, we would add:
+    // - 1 pip on face 1 (opposite to face 6)
+    // - 2 pips on face 2 (opposite to face 5)
+    // - 3 pips on face 3 (opposite to face 4)
+    // - 4 pips on face 4 (opposite to face 3)
+    // - 5 pips on face 5 (opposite to face 2)
+    // - 6 pips on face 6 (opposite to face 1)
+    
+    // This is a simplified version that would be expanded in a real implementation
+  }
+  
+  /**
+   * Create the physics body for the die
+   */
+  createPhysicsBody() {
+    const size = this.options.size;
+    const halfSize = size / 2;
+    
+    // Create a box shape
+    const shape = new CANNON.Box(new CANNON.Vec3(halfSize, halfSize, halfSize));
+    
+    // Create the body
+    this.body = new CANNON.Body({
+      mass: this.options.mass,
+      shape: shape,
+      position: new CANNON.Vec3(
+        this.options.position.x,
+        this.options.position.y,
+        this.options.position.z
+      ),
+      material: new CANNON.Material({
+        friction: this.options.friction,
+        restitution: this.options.restitution
+      })
+    });
+    
+    // Add the body to the physics world
+    this.renderer.world.addBody(this.body);
+  }
+  
+  /**
+   * Add the die mesh to the scene
+   */
+  addToScene() {
+    this.renderer.scene.add(this.mesh);
+    
+    // Update the mesh position to match the physics body
+    this.updateFromPhysics();
+  }
+  
+  /**
+   * Update the mesh position and rotation from the physics body
+   */
+  updateFromPhysics() {
+    if (this.mesh && this.body) {
+      // Update position
+      this.mesh.position.copy(this.body.position);
+      
+      // Update rotation
+      this.mesh.quaternion.copy(this.body.quaternion);
+    }
+  }
+  
+  /**
+   * Roll the die with physics
+   * @param {Object} options - Roll options
+   */
+  roll(options = {}) {
+    const force = options.force || 5;
+    const torque = options.torque || 10;
+    
+    // Reset position
+    this.body.position.set(
+      Math.random() * 40 - 20,
+      100 + Math.random() * 50,
+      Math.random() * 40 - 20
+    );
+    
+    // Reset velocity and angular velocity
+    this.body.velocity.set(0, 0, 0);
+    this.body.angularVelocity.set(0, 0, 0);
+    
+    // Apply random force
+    this.body.applyLocalForce(
+      new CANNON.Vec3(
+        (Math.random() - 0.5) * force * 1000,
+        (Math.random() - 0.5) * force * 1000,
+        (Math.random() - 0.5) * force * 1000
+      ),
+      new CANNON.Vec3(0, 0, 0)
+    );
+    
+    // Apply random torque
+    this.body.applyTorque(
+      new CANNON.Vec3(
+        (Math.random() - 0.5) * torque * 1000,
+        (Math.random() - 0.5) * torque * 1000,
+        (Math.random() - 0.5) * torque * 1000
+      )
+    );
+    
+    // Determine the result after rolling
+    setTimeout(() => {
+      this.determineValue();
+    }, options.duration || 2000);
+  }
+  
+  /**
+   * Determine the value of the die based on its orientation
+   */
+  determineValue() {
+    // In a real implementation, this would determine which face is up
+    // and set the value accordingly
+    
+    // For a d6, we would check which face normal is most aligned with the up vector
+    
+    // This is a simplified version that just sets a random value
+    this.value = Math.floor(Math.random() * 6) + 1;
+  }
+  
+  /**
+   * Remove the die from the scene and physics world
+   */
+  remove() {
+    if (this.mesh) {
+      this.renderer.scene.remove(this.mesh);
+      this.mesh.geometry.dispose();
+      this.mesh.material.dispose();
+      this.mesh = null;
+    }
+    
+    if (this.body) {
+      this.renderer.world.removeBody(this.body);
+      this.body = null;
+    }
+  }
+  
+  /**
+   * Update die options
+   * @param {Object} options - New options
+   */
+  updateOptions(options) {
+    this.options = Object.assign(this.options, options);
+    
+    // Remove old mesh and body
+    this.remove();
+    
+    // Create new mesh and body with updated options
+    this.init();
+  }
+}
+
+// Export for use in Node.js environments (for testing)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { DiceRenderer, Dice };
+}

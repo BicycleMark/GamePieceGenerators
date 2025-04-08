@@ -48,6 +48,18 @@ Located in the `/checkerpieces` directory, this tool allows you to create custom
 - Save and load your settings
 - Real-time preview of changes
 
+### 3D Dice Generator
+
+Located in the `/dice` directory, this tool allows you to create customizable 3D dice with physics-based animations for games, UI elements, or other creative projects.
+
+- Generate 3D dice with realistic rendering using Three.js
+- Physics-based animations for rolling and spinning
+- Customize colors, materials, and pip styles
+- Multiple dice types (d6)
+- Export as SVG, PNG, or animated GIF
+- Save and load your settings
+- Real-time 3D preview with camera controls
+
 ## Usage
 
 Each generator is a standalone web application that can be opened directly in a browser. No server or build process is required.
@@ -91,6 +103,23 @@ GamePieceGenerators/
 │   │   ├── black-king.svg
 │   │   ├── light-square.svg
 │   │   └── dark-square.svg
+│   └── svg/
+│       └── defaults.json
+├── dice/
+│   ├── README.md
+│   ├── index.html
+│   ├── metadata.json
+│   ├── css/
+│   │   └── dice.css
+│   ├── js/
+│   │   ├── dice.js
+│   │   ├── settings-manager.js
+│   │   └── ui-controls.js
+│   ├── samples/
+│   │   ├── dice-d6-white.svg
+│   │   ├── dice-d6-red.svg
+│   │   ├── dice-d6-blue.svg
+│   │   └── dice-d6-green.svg
 │   └── svg/
 │       └── defaults.json
 ├── checkerpieces/

@@ -123,6 +123,11 @@
       color: white;
     }
     
+    .dice-header {
+      background-color: #e67e22; /* Orange */
+      color: white;
+    }
+    
     .card-body {
       padding: 1.5rem;
     }
@@ -191,6 +196,14 @@
     
     .chess-button:hover {
       background-color: #1a2530; /* Darker blue */
+    }
+    
+    .dice-button {
+      background-color: #e67e22; /* Orange to match header */
+    }
+    
+    .dice-button:hover {
+      background-color: #d35400; /* Darker orange */
     }
     
     .seven-segment-container {
@@ -262,6 +275,14 @@
       gap: 15px;
       margin-bottom: 15px;
       justify-content: center;
+    }
+    
+    .dice-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      justify-content: center;
+      perspective: 800px;
     }
     
     .minesweeper-tile {
@@ -346,6 +367,13 @@
       background-color: #333;
       color: white;
       margin-top: 2rem;
+    }
+    
+    /* Dice animations */
+    @keyframes rotate-die {
+      0% { transform: rotateX(30deg) rotateY(40deg); }
+      50% { transform: rotateX(210deg) rotateY(220deg); }
+      100% { transform: rotateX(390deg) rotateY(400deg); }
     }
     
     @media (max-width: 768px) {

@@ -117,20 +117,21 @@ You can access the deployed site at: https://bicyclemark.github.io/GamePieceGene
 
 1. Go to your repository on GitHub
 2. Navigate to Settings > Pages
-3. Under "Build and deployment" > "Source", select "GitHub Actions"
-4. Click "Save"
+3. Under "Build and deployment" > "Source", select "Deploy from a branch"
+4. Under "Branch", select "gh-pages" and "/ (root)"
+5. Click "Save"
 
 This is a one-time setup that must be completed before the GitHub Actions workflow can successfully deploy your site.
 
 ### GitHub Actions Workflow
 
-Once GitHub Pages is enabled, the deployment is handled automatically by the workflow defined in `.github/workflows/deploy.yml`. This workflow:
+The deployment is handled automatically by the workflow defined in `.github/workflows/deploy.yml`. This workflow:
 
 - Runs on pushes to the `main` branch
 - Sets up Node.js and installs dependencies
 - Runs tests to ensure everything is working
-- Uploads the site directly without any build process
-- Deploys the built site to GitHub Pages
+- Deploys the site to the `gh-pages` branch
+- GitHub Pages then serves the content from the `gh-pages` branch
 
 If you need to modify the deployment process, you can edit the workflow file.
 

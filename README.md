@@ -120,6 +120,14 @@ The deployment is handled by the workflow defined in `.github/workflows/deploy.y
 - Runs tests to ensure everything is working
 - Deploys the site to GitHub Pages
 
+**Important:** Before the workflow can successfully deploy the site, you need to manually enable GitHub Pages in the repository settings:
+
+1. Go to your repository on GitHub
+2. Navigate to Settings > Pages
+3. Under "Source", select "GitHub Actions"
+
+After enabling GitHub Pages, the workflow will be able to deploy the site automatically on future pushes to the `main` branch.
+
 If you need to modify the deployment process, you can edit the workflow file.
 
 ## License

@@ -4,6 +4,18 @@ A collection of web-based tools for generating customizable game pieces and UI e
 
 ## Tools
 
+### Chess Pieces Generator
+
+Located in the `/chesspieces` directory, this tool allows you to create customizable chess pieces for games, UI elements, or other creative projects.
+
+- Generate SVG and PNG chess pieces
+- Customize colors, effects, and dimensions
+- Support for all standard chess pieces (pawn, rook, knight, bishop, queen, king)
+- Customizable board square colors
+- Export individual pieces or complete sets
+- Save and load your settings
+- Real-time preview of changes
+
 ### Digits Generator
 
 Located in the `/digits` directory, this tool allows you to create customizable seven-segment display digits for games, UI elements, or other creative projects.
@@ -54,6 +66,33 @@ Each generator is a standalone web application that can be opened directly in a 
 GamePieceGenerators/
 ├── .gitignore
 ├── README.md
+├── chesspieces/
+│   ├── README.md
+│   ├── index.html
+│   ├── metadata.json
+│   ├── css/
+│   │   └── chess-pieces.css
+│   ├── js/
+│   │   ├── chess-pieces.js
+│   │   ├── settings-manager.js
+│   │   └── ui-controls.js
+│   ├── samples/
+│   │   ├── white-pawn.svg
+│   │   ├── white-rook.svg
+│   │   ├── white-knight.svg
+│   │   ├── white-bishop.svg
+│   │   ├── white-queen.svg
+│   │   ├── white-king.svg
+│   │   ├── black-pawn.svg
+│   │   ├── black-rook.svg
+│   │   ├── black-knight.svg
+│   │   ├── black-bishop.svg
+│   │   ├── black-queen.svg
+│   │   ├── black-king.svg
+│   │   ├── light-square.svg
+│   │   └── dark-square.svg
+│   └── svg/
+│       └── defaults.json
 ├── checkerpieces/
 │   ├── README.md
 │   ├── index.html

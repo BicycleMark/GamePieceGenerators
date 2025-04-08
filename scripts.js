@@ -62,6 +62,74 @@ document.addEventListener('DOMContentLoaded', function() {
       tilesPreview.appendChild(tile);
     });
     
+    // Create the chess pieces preview
+    const chessPreview = document.getElementById('chess-preview');
+    
+    // Create chess pieces (white and black pieces)
+    const createChessPiece = (color, type) => {
+      const pieceContainer = document.createElement('div');
+      pieceContainer.style.width = '60px';
+      pieceContainer.style.height = '60px';
+      pieceContainer.style.position = 'relative';
+      
+      const piece = document.createElement('div');
+      piece.style.width = '100%';
+      piece.style.height = '100%';
+      piece.style.position = 'relative';
+      piece.style.display = 'flex';
+      piece.style.justifyContent = 'center';
+      piece.style.alignItems = 'center';
+      
+      // Create the piece shape based on type
+      let pieceShape;
+      
+      if (type === 'pawn') {
+        pieceShape = document.createElement('div');
+        pieceShape.style.width = '30px';
+        pieceShape.style.height = '40px';
+        pieceShape.style.borderRadius = '50% 50% 25% 25%';
+      } else if (type === 'king') {
+        pieceShape = document.createElement('div');
+        pieceShape.style.width = '30px';
+        pieceShape.style.height = '45px';
+        pieceShape.style.borderRadius = '25% 25% 20% 20%';
+        
+        const cross = document.createElement('div');
+        cross.style.position = 'absolute';
+        cross.style.top = '5px';
+        cross.style.width = '10px';
+        cross.style.height = '10px';
+        cross.style.backgroundColor = color === 'white' ? '#CCCCCC' : '#333333';
+        cross.style.clipPath = 'polygon(0% 40%, 40% 40%, 40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%)';
+        pieceShape.appendChild(cross);
+      }
+      
+      if (pieceShape) {
+        if (color === 'white') {
+          pieceShape.style.backgroundColor = '#FFFFFF';
+          pieceShape.style.border = '2px solid #CCCCCC';
+          pieceShape.style.boxShadow = 'inset 0 10px 15px rgba(255, 255, 255, 0.8), inset 0 -10px 15px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.1)';
+        } else {
+          pieceShape.style.backgroundColor = '#000000';
+          pieceShape.style.border = '2px solid #333333';
+          pieceShape.style.boxShadow = 'inset 0 10px 15px rgba(255, 255, 255, 0.2), inset 0 -10px 15px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2)';
+        }
+        
+        piece.appendChild(pieceShape);
+      }
+      
+      pieceContainer.appendChild(piece);
+      return pieceContainer;
+    };
+    
+    // Add the chess pieces to the preview
+    if (chessPreview) {
+      chessPreview.appendChild(createChessPiece('white', 'pawn'));
+      chessPreview.appendChild(createChessPiece('white', 'king'));
+      chessPreview.appendChild(createChessPiece('black', 'pawn'));
+      chessPreview.appendChild(createChessPiece('black', 'king'));
+    }
+    
     // Create the checker pieces preview
     const checkersPreview = document.getElementById('checkers-preview');
     
@@ -196,6 +264,54 @@ document.addEventListener('DOMContentLoaded', function() {
         checkerColorElement.textContent = checkerColors[checkerColorIndex];
       }
     }, 2800);
+    
+    // Cycle through chess piece colors
+    let chessWhiteColorIndex = 0;
+    let chessBlackColorIndex = 0;
+    const chessWhiteColors = ['#FFFFFF', '#F5F5F5', '#EEEED2', '#E8E8E8'];
+    const chessWhiteBorderColors = ['#CCCCCC', '#DDDDDD', '#CCCCAA', '#BBBBBB'];
+    const chessBlackColors = ['#000000', '#1A1110', '#202020', '#2C3E50'];
+    const chessBlackBorderColors = ['#333333', '#444444', '#505050', '#1A2530'];
+    
+    setInterval(() => {
+      chessWhiteColorIndex = (chessWhiteColorIndex + 1) % chessWhiteColors.length;
+      
+      if (chessPreview) {
+        const whitePieces = chessPreview.querySelectorAll('div > div > div:first-child');
+        
+        whitePieces.forEach((pieceShape, index) => {
+          if (index < 2) { // Only update white pieces
+            pieceShape.style.backgroundColor = chessWhiteColors[chessWhiteColorIndex];
+            pieceShape.style.borderColor = chessWhiteBorderColors[chessWhiteColorIndex];
+          }
+        });
+      }
+      
+      const chessWhiteElement = document.getElementById('chess-white');
+      if (chessWhiteElement) {
+        chessWhiteElement.textContent = chessWhiteColors[chessWhiteColorIndex];
+      }
+    }, 2700);
+    
+    setInterval(() => {
+      chessBlackColorIndex = (chessBlackColorIndex + 1) % chessBlackColors.length;
+      
+      if (chessPreview) {
+        const blackPieces = chessPreview.querySelectorAll('div > div > div:first-child');
+        
+        blackPieces.forEach((pieceShape, index) => {
+          if (index >= 2) { // Only update black pieces
+            pieceShape.style.backgroundColor = chessBlackColors[chessBlackColorIndex];
+            pieceShape.style.borderColor = chessBlackBorderColors[chessBlackColorIndex];
+          }
+        });
+      }
+      
+      const chessBlackElement = document.getElementById('chess-black');
+      if (chessBlackElement) {
+        chessBlackElement.textContent = chessBlackColors[chessBlackColorIndex];
+      }
+    }, 3100);
     
     // Cycle through crown colors
     let crownColorIndex = 0;

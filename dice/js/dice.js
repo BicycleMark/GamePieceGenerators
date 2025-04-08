@@ -34,14 +34,15 @@ class DiceRenderer {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xf0f0f0);
     
-    // Create camera
+    // Create camera with better perspective for 3D viewing
     this.camera = new THREE.PerspectiveCamera(
       45, 
       this.options.width / this.options.height, 
       0.1, 
       2000
     );
-    this.camera.position.set(0, 200, 400);
+    // Position camera at an angle to better show the 3D nature of the dice
+    this.camera.position.set(150, 150, 250);
     this.camera.lookAt(0, 0, 0);
     
     // Create renderer
@@ -171,6 +172,31 @@ class DiceRenderer {
    * Set up camera controls
    */
   setupControls() {
+    // Create a simple placeholder for controls in case OrbitControls is not available
+    this.controls = {
+      update: () => {
+        // Simple auto-rotation fallback
+        if (this._autoRotate) {
+          const rotationSpeed = 0.005;
+          this.camera.position.x = this.camera.position.x * Math.cos(rotationSpeed) - this.camera.position.z * Math.sin(rotationSpeed);
+          this.camera.position.z = this.camera.position.x * Math.sin(rotationSpeed) + this.camera.position.z * Math.cos(rotationSpeed);
+          this.camera.lookAt(0, 0, 0);
+        }
+      },
+      dispose: () => {},
+      autoRotate: false,
+      enableDamping: false,
+      dampingFactor: 0.05,
+      screenSpacePanning: false,
+      minDistance: 100,
+      maxDistance: 800,
+      maxPolarAngle: Math.PI / 2
+    };
+    
+    // Store auto-rotation state
+    this._autoRotate = true;
+    
+    // Try to use OrbitControls if available
     try {
       if (typeof THREE.OrbitControls === 'function') {
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -180,23 +206,16 @@ class DiceRenderer {
         this.controls.minDistance = 100;
         this.controls.maxDistance = 800;
         this.controls.maxPolarAngle = Math.PI / 2;
+        // Enable auto-rotation to better showcase the 3D nature
+        this.controls.autoRotate = true;
+        this.controls.autoRotateSpeed = 1.0;
+        console.log('OrbitControls initialized successfully');
       } else {
         console.warn('THREE.OrbitControls is not available. Using fallback controls.');
-        // Create a simple placeholder for controls
-        this.controls = {
-          update: () => {},
-          dispose: () => {},
-          autoRotate: false
-        };
       }
     } catch (error) {
-      console.error('Error setting up controls:', error);
-      // Create a simple placeholder for controls
-      this.controls = {
-        update: () => {},
-        dispose: () => {},
-        autoRotate: false
-      };
+      console.error('Error setting up OrbitControls:', error);
+      console.log('Using fallback controls instead');
     }
   }
   
@@ -672,7 +691,7 @@ class Dice {
     const size = this.options.size;
     const halfSize = size / 2;
     const pipSize = size * 0.12; // Slightly larger pips (12% of die size)
-    const pipDepth = size * 0.02; // Give pips some depth for better visibility
+    const pipDepth = size * 0.03; // Increase depth for better visibility
     
     // Create pips based on the selected style
     for (let i = 0; i < faceNormals.length; i++) {
@@ -687,7 +706,7 @@ class Dice {
       
       // Add pips based on style
       if (this.options.pipStyle === 'dots' || !this.options.pipStyle) {
-        // Create dots with some depth (use cylinders instead of flat circles)
+        // Create dots with more depth (use cylinders instead of flat circles)
         pipPositions[faceValue].forEach(pos => {
           // Create a short cylinder for 3D pips
           const pipGeometry = new THREE.CylinderGeometry(
@@ -742,11 +761,11 @@ class Dice {
         faceGroup.add(pip);
       }
       
-      // Position the face group
+      // Position the face group - move further out from the face for better visibility
       faceGroup.position.set(
-        normal[0] * (halfSize + 0.1), // Slightly outside the cube
-        normal[1] * (halfSize + 0.1),
-        normal[2] * (halfSize + 0.1)
+        normal[0] * (halfSize + 0.5), // Move further outside the cube
+        normal[1] * (halfSize + 0.5),
+        normal[2] * (halfSize + 0.5)
       );
       
       // Rotate the face group to face outward

@@ -7,8 +7,9 @@ class UIControls {
   /**
    * Initialize the UI controls
    * @param {Object} options - Options for the UI
+   * @param {boolean} skipInit - Skip initialization (for testing)
    */
-  constructor(options = {}) {
+  constructor(options = {}, skipInit = false) {
     // Default options
     this.defaultOptions = {
       containerSelector: '.chess-generator-container',
@@ -39,8 +40,10 @@ class UIControls {
     // Initialize individual piece previews
     this.piecePreviewElements = {};
     
-    // Initialize the UI
-    this.init();
+    // Initialize the UI (unless skipped for testing)
+    if (!skipInit) {
+      this.init();
+    }
   }
   
   /**
@@ -135,7 +138,7 @@ class UIControls {
           pieceColor: color,
           pieceColorValue: color === 'white' ? this.settingsManager.getSetting('pieces', 'whiteColor') : this.settingsManager.getSetting('pieces', 'blackColor'),
           borderColorValue: color === 'white' ? this.settingsManager.getSetting('pieces', 'whiteBorderColor') : this.settingsManager.getSetting('pieces', 'blackBorderColor'),
-          size: 50,
+          size: this.settingsManager.getSetting('pieces', 'size'),
           borderWidth: this.settingsManager.getSetting('pieces', 'borderWidth'),
           is3D: this.settingsManager.getSetting('pieces', 'is3D'),
           style: this.settingsManager.getSetting('pieces', 'style'),
@@ -342,11 +345,35 @@ class UIControls {
       70,
       5,
       (value) => {
-        this.settingsManager.setSetting('pieces', 'size', parseInt(value));
+        const newSize = parseInt(value);
+        this.settingsManager.setSetting('pieces', 'size', newSize);
         this.settingsManager.saveSettings();
         
-        // Recreate the board with the new piece size
-        this.init();
+        // Update the CSS variable for piece size
+        document.documentElement.style.setProperty('--piece-size', `${newSize}px`);
+        
+        // Update the size of all pieces on the board
+        if (this.chessBoard && this.chessBoard.pieces) {
+          // Update the board's pieceSize option
+          this.chessBoard.options.pieceSize = newSize;
+          
+          // Resize each piece on the board
+          this.chessBoard.pieces.forEach(pieceInfo => {
+            if (pieceInfo && pieceInfo.piece && typeof pieceInfo.piece.resize === 'function') {
+              pieceInfo.piece.resize(newSize);
+            }
+          });
+        }
+        
+        // Update the size of all piece previews
+        Object.values(this.piecePreviewElements).forEach(piece => {
+          if (piece && typeof piece.resize === 'function') {
+            piece.resize(newSize);
+          }
+        });
+        
+        // Show success message
+        this.showStatusMessage(`Piece size updated to ${newSize}px`, 'success');
       }
     );
     controlGroup.appendChild(pieceSizeControl);
@@ -661,41 +688,206 @@ class UIControls {
     title.textContent = 'Export';
     controlGroup.appendChild(title);
     
+    // Output format selection
+    const formatControl = document.createElement('div');
+    formatControl.className = 'form-control';
+    
+    const formatLabel = document.createElement('div');
+    formatLabel.className = 'form-control-label';
+    formatLabel.textContent = 'Output Format';
+    formatControl.appendChild(formatLabel);
+    
+    const formatOptions = document.createElement('div');
+    formatOptions.className = 'radio-group';
+    
+    // SVG option
+    const svgOption = document.createElement('label');
+    const svgRadio = document.createElement('input');
+    svgRadio.type = 'radio';
+    svgRadio.name = 'output-format';
+    svgRadio.value = 'svg';
+    svgRadio.checked = true;
+    svgOption.appendChild(svgRadio);
+    svgOption.appendChild(document.createTextNode('SVG'));
+    formatOptions.appendChild(svgOption);
+    
+    // PNG option
+    const pngOption = document.createElement('label');
+    const pngRadio = document.createElement('input');
+    pngRadio.type = 'radio';
+    pngRadio.name = 'output-format';
+    pngRadio.value = 'png';
+    pngOption.appendChild(pngRadio);
+    pngOption.appendChild(document.createTextNode('PNG'));
+    formatOptions.appendChild(pngOption);
+    
+    formatControl.appendChild(formatOptions);
+    controlGroup.appendChild(formatControl);
+    
     const buttonGroup = document.createElement('div');
     buttonGroup.className = 'button-group';
     
-    // Export board as SVG
-    const exportBoardSvgButton = document.createElement('button');
-    exportBoardSvgButton.className = 'btn btn-export';
-    exportBoardSvgButton.textContent = 'Export Board as SVG';
-    exportBoardSvgButton.addEventListener('click', () => {
-      const svgString = this.chessBoard.exportSVG();
-      this.downloadFile(svgString, 'chess-board.svg', 'image/svg+xml');
+    // Export board as SVG/PNG
+    const exportBoardButton = document.createElement('button');
+    exportBoardButton.className = 'btn btn-export';
+    exportBoardButton.textContent = 'Export Board';
+    exportBoardButton.addEventListener('click', async () => {
+      const format = document.querySelector('input[name="output-format"]:checked').value;
       
-      // Show success message
-      this.showStatusMessage('Board exported as SVG', 'success');
-    });
-    buttonGroup.appendChild(exportBoardSvgButton);
-    
-    // Export board as PNG
-    const exportBoardPngButton = document.createElement('button');
-    exportBoardPngButton.className = 'btn btn-export';
-    exportBoardPngButton.textContent = 'Export Board as PNG';
-    exportBoardPngButton.addEventListener('click', async () => {
-      try {
-        const pngDataUrl = await this.chessBoard.exportPNG();
-        this.downloadDataURL(pngDataUrl, 'chess-board.png');
+      if (format === 'svg') {
+        const svgString = this.chessBoard.exportSVG();
+        this.downloadFile(svgString, 'chess-board.svg', 'image/svg+xml');
         
         // Show success message
-        this.showStatusMessage('Board exported as PNG', 'success');
-      } catch (error) {
-        console.error('Error exporting board as PNG:', error);
-        
-        // Show error message
-        this.showStatusMessage('Error exporting board as PNG', 'error');
+        this.showStatusMessage('Board exported as SVG', 'success');
+      } else if (format === 'png') {
+        try {
+          const pngDataUrl = await this.chessBoard.exportPNG();
+          this.downloadDataURL(pngDataUrl, 'chess-board.png');
+          
+          // Show success message
+          this.showStatusMessage('Board exported as PNG', 'success');
+        } catch (error) {
+          console.error('Error exporting board as PNG:', error);
+          
+          // Show error message
+          this.showStatusMessage('Error exporting board as PNG', 'error');
+        }
       }
     });
-    buttonGroup.appendChild(exportBoardPngButton);
+    buttonGroup.appendChild(exportBoardButton);
+    
+    // Export all pieces
+    const exportAllButton = document.createElement('button');
+    exportAllButton.className = 'btn btn-export';
+    exportAllButton.textContent = 'Export All Pieces';
+    exportAllButton.addEventListener('click', async () => {
+      try {
+        // Check if JSZip is available
+        if (typeof JSZip === 'undefined') {
+          throw new Error('JSZip library is not loaded. Make sure the JSZip script is included.');
+        }
+        
+        // Create a new JSZip instance
+        const zip = new JSZip();
+        const format = document.querySelector('input[name="output-format"]:checked').value;
+        
+        // Store current board state
+        const currentPieces = [...this.chessBoard.pieces];
+        
+        // Create an empty board
+        this.chessBoard.clearBoard();
+        
+        // Export empty board
+        if (format === 'svg') {
+          const svgString = this.chessBoard.exportSVG();
+          zip.file(`empty-board.svg`, svgString);
+        } else if (format === 'png') {
+          const pngDataUrl = await this.chessBoard.exportPNG();
+          const pngBlob = await fetch(pngDataUrl).then(res => res.blob());
+          zip.file(`empty-board.png`, pngBlob);
+        }
+        
+        // Export individual pieces
+        const pieceTypes = ['pawn', 'rook', 'knight', 'bishop', 'queen', 'king'];
+        const colors = ['white', 'black'];
+        
+        // Create a temporary container for individual pieces
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.top = '-9999px';
+        document.body.appendChild(tempContainer);
+        
+        for (const type of pieceTypes) {
+          for (const color of colors) {
+            // Create SVG element for the piece
+            const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            
+            // Create piece options
+            const pieceOptions = {
+              pieceType: type,
+              pieceColor: color,
+              pieceColorValue: color === 'white' ? this.settingsManager.getSetting('pieces', 'whiteColor') : this.settingsManager.getSetting('pieces', 'blackColor'),
+              borderColorValue: color === 'white' ? this.settingsManager.getSetting('pieces', 'whiteBorderColor') : this.settingsManager.getSetting('pieces', 'blackBorderColor'),
+              size: this.settingsManager.getSetting('pieces', 'size'),
+              borderWidth: this.settingsManager.getSetting('pieces', 'borderWidth'),
+              is3D: this.settingsManager.getSetting('pieces', 'is3D'),
+              style: this.settingsManager.getSetting('pieces', 'style'),
+              glowEnabled: this.settingsManager.getSetting('effects', 'glowEnabled'),
+              glowColor: this.settingsManager.getSetting('effects', 'glowColor'),
+              glowSize: this.settingsManager.getSetting('effects', 'glowSize'),
+              shadowEnabled: this.settingsManager.getSetting('effects', 'shadowEnabled'),
+              shadowColor: this.settingsManager.getSetting('effects', 'shadowColor'),
+              shadowBlur: this.settingsManager.getSetting('effects', 'shadowBlur')
+            };
+            
+            // Create the piece
+            const piece = new ChessPiece(svgElement, pieceOptions);
+            tempContainer.appendChild(svgElement);
+            
+            // Export the piece
+            if (format === 'svg') {
+              const svgString = piece.exportSVG();
+              zip.file(`${color}-${type}.svg`, svgString);
+            } else if (format === 'png') {
+              try {
+                const pngDataUrl = await piece.exportPNG();
+                const pngBlob = await fetch(pngDataUrl).then(res => res.blob());
+                zip.file(`${color}-${type}.png`, pngBlob);
+              } catch (error) {
+                console.error(`Error exporting ${color} ${type} as PNG:`, error);
+              }
+            }
+          }
+        }
+        
+        // Clean up temporary container
+        document.body.removeChild(tempContainer);
+        
+        // Add settings.json to the ZIP
+        const settingsJson = this.settingsManager.exportSettings();
+        zip.file('chess-pieces-settings.json', settingsJson);
+        
+        // Generate date string for filename (YYYYMMDD format)
+        const date = new Date();
+        const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+        
+        // Generate ZIP filename with format
+        const zipFilename = `chess-pieces-${format.toUpperCase()}-${dateStr}.zip`;
+        
+        // Generate and download the zip file
+        const content = await zip.generateAsync({type: 'blob'});
+        
+        // Create download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(content);
+        downloadLink.download = zipFilename;
+        
+        // Trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up
+        URL.revokeObjectURL(downloadLink.href);
+        
+        // Restore the original board state
+        this.chessBoard.clearBoard();
+        currentPieces.forEach(pieceInfo => {
+          if (pieceInfo) {
+            this.chessBoard.addPiece(pieceInfo.type, pieceInfo.color, pieceInfo.row, pieceInfo.col);
+          }
+        });
+        
+        // Show success message
+        this.showStatusMessage(`All pieces exported as ${format.toUpperCase()} ZIP successfully`, 'success');
+      } catch (error) {
+        console.error('Error in Export All Pieces:', error);
+        this.showStatusMessage(`Error exporting pieces: ${error.message}`, 'error');
+      }
+    });
+    buttonGroup.appendChild(exportAllButton);
     
     // Export settings as JSON
     const exportSettingsButton = document.createElement('button');

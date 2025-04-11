@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="120" height="120" viewBox="0 0 100 100">
+  <!-- White Queen Classic -->
+  <!-- Tags: white, queen, classic, outline, medium -->
+  <!-- This file was created with actual chess piece graphics -->
+    <path d="M50,25 C47,25 45,27 45,30 C45,33 47,35 50,35 C53,35 55,33 55,30 C55,27 53,25 50,25 Z M35,40 L40,75 L60,75 L65,40 L35,40 Z M35,40 C35,40 40,50 50,50 C60,50 65,40 65,40 Z" fill="#FFFFFF" stroke="#000000" stroke-width="2" />
+  <path d="M40,45 L40,55 M50,45 L50,55 M60,45 L60,55" fill="none" stroke="#000000" stroke-width="2" />
+
+</svg>

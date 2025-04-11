@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Theme SVG Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .item {
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .item:hover {
+            transform: scale(1.05);
+        }
+        .svg-container {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            background-color: #444;
+            border-radius: 4px;
+            position: relative;
+        }
+        .item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            max-width: 80%;
+            max-height: 80%;
+            width: auto;
+            height: auto;
+        }
+        .item p {
+            margin: 5px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .theme-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .theme-toggle a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f8f8f8;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dark Theme SVG Gallery</h1>
+    
+    <div class="theme-toggle">
+        <a href="../white-theme/index.html">Switch to White Theme</a>
+    </div>
+    
+    <div class="gallery">
+        <div class="item">
+            <div class="svg-container">
+                <img src="king.svg" alt="Chess King">
+            </div>
+            <p>King (♔) - ∞</p>
+        </div>
+        <div class="item">
+            <div class="svg-container">
+                <img src="queen.svg" alt="Chess Queen">
+            </div>
+            <p>Queen (♕) - 9 points</p>
+        </div>
+        <div class="item">
+            <div class="svg-container">
+                <img src="rook.svg" alt="Chess Rook">
+            </div>
+            <p>Rook (♖) - 5 points</p>
+        </div>
+        <div class="item">
+            <div class="svg-container">
+                <img src="bishop.svg" alt="Chess Bishop">
+            </div>
+            <p>Bishop (♗) - 3 points</p>
+        </div>
+        <div class="item">
+            <div class="svg-container">
+                <img src="knight.svg" alt="Chess Knight">
+            </div>
+            <p>Knight (♘) - 3 points</p>
+        </div>
+        <div class="item">
+            <div class="svg-container">
+                <img src="pawn.svg" alt="Chess Pawn">
+            </div>
+            <p>Pawn (♙) - 1 point</p>
+        </div>
+    </div>
+</body>
+</html>

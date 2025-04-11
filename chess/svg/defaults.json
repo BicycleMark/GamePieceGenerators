@@ -1,0 +1,8 @@
+{
+  "pieceType": "bishop",
+  "theme": "dark",
+  "pieceSize": 150,
+  "exportScale": 2,
+  "exportFormat": "svg",
+  "version": "1.0.0"
+}

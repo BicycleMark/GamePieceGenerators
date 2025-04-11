@@ -149,6 +149,9 @@
         showCoordinates: true
       });
       
+      // Set up the initial position with pieces
+      chessBoard.setupInitialPosition();
+      
       // Add event listeners for theme change
       const themeRadios = document.querySelectorAll('input[name="theme"]');
       themeRadios.forEach(radio => {
@@ -162,6 +165,9 @@
               theme: theme,
               showCoordinates: true
             });
+            
+            // Set up the initial position with pieces
+            chessBoard.setupInitialPosition();
             
             // Save to localStorage
             try {

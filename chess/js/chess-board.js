@@ -3,7 +3,7 @@
  * Provides functionality for rendering and interacting with a chess board
  */
 
-const { ChessPiece } = require('./chess-pieces');
+// No require needed - ChessPiece is loaded from chess-pieces.js script
 
 class ChessBoard {
   /**
@@ -56,7 +56,7 @@ class ChessBoard {
     }
     
     // Create the squares
-    if (process.env.NODE_ENV !== 'test') {
+    if (typeof process === 'undefined' || !process.env || process.env.NODE_ENV !== 'test') {
       this.createSquares();
     }
   }
@@ -68,7 +68,7 @@ class ChessBoard {
     this.squares = [];
     
     // In test environment, create mock squares
-    if (process.env.NODE_ENV === 'test') {
+    if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test') {
       for (let row = 0; row < this.options.boardSize; row++) {
         this.squares[row] = [];
         
@@ -104,6 +104,9 @@ class ChessBoard {
         square.style.backgroundColor = isLight ? this.options.lightSquareColor : this.options.darkSquareColor;
         square.style.width = `${this.options.squareSize}px`;
         square.style.height = `${this.options.squareSize}px`;
+        square.style.display = 'flex';
+        square.style.justifyContent = 'center';
+        square.style.alignItems = 'center';
         square.dataset.row = row;
         square.dataset.col = col;
         
@@ -159,34 +162,68 @@ class ChessBoard {
    * @returns {Object|null} - The created piece or null if invalid position
    */
   addPiece(type, color, row, col) {
+    console.log(`Adding piece: ${type} ${color} at ${row},${col}`);
     if (row < 0 || row >= this.options.boardSize || col < 0 || col >= this.options.boardSize) {
+      console.log('Invalid position');
       return null;
     }
     
     // Get the square at the specified position
     const square = this.squares[row][col];
-    if (!square) return null;
+    if (!square) {
+      console.log('Square not found');
+      return null;
+    }
     
     // Create piece element and SVG
     let pieceElement, svgElement, piece;
     
     // In test environment, create mock elements
-    if (process.env.NODE_ENV === 'test') {
+    if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test') {
       pieceElement = { appendChild: jest.fn() };
       svgElement = {};
       piece = { options: { pieceType: type, pieceColor: color } };
     } else {
       // In browser environment, create actual DOM elements
       pieceElement = document.createElement('div');
-      svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      piece = new ChessPiece(svgElement, {
-        pieceType: type,
-        pieceColor: color,
-        size: this.options.squareSize * 0.8
-      });
+      pieceElement.className = 'chess-piece';
+      pieceElement.style.width = `${this.options.squareSize * 0.8}px`;
+      pieceElement.style.height = `${this.options.squareSize * 0.8}px`;
+      pieceElement.style.display = 'flex';
+      pieceElement.style.justifyContent = 'center';
+      pieceElement.style.alignItems = 'center';
       
-      // Add the piece to the square
-      pieceElement.appendChild(svgElement);
+      // Create an img element directly
+      const imgElement = document.createElement('img');
+      const folder = this.options.theme === 'dark' ? 'dark-theme' : 'white-theme';
+      imgElement.src = `samples/${folder}/${type}.svg`;
+      imgElement.style.width = '100%';
+      imgElement.style.height = '100%';
+      imgElement.alt = `${color} ${type}`;
+      
+      // Add error handling
+      imgElement.onerror = () => {
+        console.error(`Error loading image: samples/${folder}/${type}.svg`);
+        imgElement.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23FF0000%22%20d%3D%22M12%202C6.48%202%202%206.48%202%2012s4.48%2010%2010%2010%2010-4.48%2010-10S17.52%202%2012%202zm1%2015h-2v-2h2v2zm0-4h-2V7h2v6z%22%2F%3E%3C%2Fsvg%3E';
+      };
+      
+      // Add load event handler
+      imgElement.onload = () => {
+        console.log(`Image loaded successfully: samples/${folder}/${type}.svg`);
+      };
+      
+      // Create a mock ChessPiece object for compatibility
+      piece = {
+        options: { pieceType: type, pieceColor: color },
+        setOptions: () => {},
+        setOption: () => {},
+        set3DEffect: () => {},
+        setGlowEffect: () => {},
+        setShadowEffect: () => {}
+      };
+      
+      // Add the img to the piece element
+      pieceElement.appendChild(imgElement);
     }
     
     // Add the piece to the square
@@ -224,7 +261,7 @@ class ChessBoard {
     const square = this.squares[row][col];
     
     // In browser environment, remove from DOM
-    if (process.env.NODE_ENV !== 'test' && square && piece.element && square.removeChild) {
+    if ((typeof process === 'undefined' || !process.env || process.env.NODE_ENV !== 'test') && square && piece.element && square.removeChild) {
       square.removeChild(piece.element);
     }
     
@@ -240,17 +277,14 @@ class ChessBoard {
    */
   clearBoard() {
     // In browser environment, remove from DOM
-    if (process.env.NODE_ENV !== 'test') {
-      // Remove all SVG elements from the board
-      const svgElements = this.element.querySelectorAll ? 
-        this.element.querySelectorAll('svg') : [];
-      
-      for (let i = 0; i < svgElements.length; i++) {
-        const svg = svgElements[i];
-        if (svg.parentNode && svg.parentNode.parentNode) {
-          svg.parentNode.parentNode.removeChild(svg.parentNode);
+    if (typeof process === 'undefined' || !process.env || process.env.NODE_ENV !== 'test') {
+      // Remove all piece elements from the board
+      this.pieces.forEach(pieceInfo => {
+        const square = this.squares[pieceInfo.row][pieceInfo.col];
+        if (square && pieceInfo.element && square.contains(pieceInfo.element)) {
+          square.removeChild(pieceInfo.element);
         }
-      }
+      });
     }
     
     // Clear pieces array
@@ -262,6 +296,7 @@ class ChessBoard {
    * Set up the initial position
    */
   setupInitialPosition() {
+    console.log('Setting up initial position');
     this.clearBoard();
     
     // Add pawns
@@ -278,6 +313,7 @@ class ChessBoard {
       this.addPiece(backRowPieces[col], 'black', 0, col);
     }
     
+    console.log('Finished setting up initial position, pieces:', this.pieces.length);
     return true;
   }
   
@@ -442,5 +478,10 @@ class ChessBoard {
   }
 }
 
-// Export the ChessBoard class
-module.exports = ChessBoard;
+// Make ChessBoard available globally for browser
+if (typeof window !== 'undefined') {
+  window.ChessBoard = ChessBoard;
+} else if (typeof module !== 'undefined' && module.exports) {
+  // Keep CommonJS export for tests
+  module.exports = ChessBoard;
+}

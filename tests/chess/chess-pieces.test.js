@@ -2,7 +2,8 @@
  * Tests for Chess Pieces Generator
  */
 
-const { ChessPiece, ChessBoard } = require('../../chess/js/chess-pieces');
+const { ChessPiece } = require('../../chess/js/chess-pieces');
+const ChessBoard = require('../../chess/js/chess-board');
 
 // Mock document and SVG elements
 const setupMocks = () => {

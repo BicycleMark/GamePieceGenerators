@@ -176,9 +176,9 @@
       });
       
       // Export as SVG
-      document.getElementById('export-svg-button').addEventListener('click', async () => {
+      document.getElementById('export-svg-button').addEventListener('click', () => {
         try {
-          const svgString = await chessBoard.exportSVG();
+          const svgString = chessBoard.exportSVG();
           
           // Create a blob and download link
           const blob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -197,9 +197,9 @@
       });
       
       // Export as PNG
-      document.getElementById('export-png-button').addEventListener('click', async () => {
+      document.getElementById('export-png-button').addEventListener('click', () => {
         try {
-          const svgString = await chessBoard.exportSVG();
+          const svgString = chessBoard.exportSVG();
           
           // Create a blob and image
           const blob = new Blob([svgString], { type: 'image/svg+xml' });

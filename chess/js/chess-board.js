@@ -252,9 +252,9 @@ class ChessBoard {
   
   /**
    * Export the board as an SVG string
-   * @returns {Promise<string>} SVG string
+   * @returns {string} SVG string
    */
-  async exportSVG() {
+  exportSVG() {
     // Create a new SVG element
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -301,32 +301,90 @@ class ChessBoard {
       }
     }
     
-    // Add the pieces
+    // Add the pieces using simplified SVG shapes
     for (const pieceInfo of this.pieces) {
-      if (pieceInfo && pieceInfo.element) {
-        try {
-          // Get the SVG content from the src attribute
-          const response = await fetch(pieceInfo.element.src);
-          const svgText = await response.text();
-          
-          // Parse the SVG content
-          const parser = new DOMParser();
-          const pieceSvgDoc = parser.parseFromString(svgText, 'image/svg+xml');
-          const pieceSvg = pieceSvgDoc.documentElement;
-          
-          // Create a group for the piece
-          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          g.setAttribute('transform', `translate(${pieceInfo.col * 100 + 10}, ${pieceInfo.row * 100 + 10}) scale(0.8)`);
-          
-          // Import the piece SVG nodes
-          const importedSvg = document.importNode(pieceSvg, true);
-          g.appendChild(importedSvg);
-          
-          // Add the group to the SVG
-          svg.appendChild(g);
-        } catch (error) {
-          console.error(`Error adding piece to SVG: ${error.message}`);
+      if (pieceInfo) {
+        // Create a group for the piece
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('transform', `translate(${pieceInfo.col * 100}, ${pieceInfo.row * 100})`);
+        
+        // Determine piece color based on theme and piece color
+        let fillColor, strokeColor;
+        if (this.options.theme === 'dark') {
+          // Dark theme: white pieces are white, black pieces are black
+          fillColor = pieceInfo.color === 'white' ? '#FFFFFF' : '#000000';
+          strokeColor = pieceInfo.color === 'white' ? '#CCCCCC' : '#333333';
+        } else {
+          // Light theme: white pieces are black, black pieces are white
+          fillColor = pieceInfo.color === 'white' ? '#000000' : '#FFFFFF';
+          strokeColor = pieceInfo.color === 'white' ? '#333333' : '#CCCCCC';
         }
+        
+        // Create a simplified representation of the piece based on its type
+        switch (pieceInfo.type) {
+          case 'pawn':
+            // Simple pawn shape
+            const pawnPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            pawnPath.setAttribute('d', 'M 50,20 C 45,20 40,25 40,35 C 40,45 45,50 30,60 C 30,60 70,60 70,60 C 55,50 60,45 60,35 C 60,25 55,20 50,20 z M 30,65 L 30,75 L 70,75 L 70,65 z');
+            pawnPath.setAttribute('fill', fillColor);
+            pawnPath.setAttribute('stroke', strokeColor);
+            pawnPath.setAttribute('stroke-width', '2');
+            g.appendChild(pawnPath);
+            break;
+            
+          case 'rook':
+            // Simple rook shape
+            const rookPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            rookPath.setAttribute('d', 'M 30,25 L 30,35 L 40,35 L 40,25 L 50,25 L 50,35 L 60,35 L 60,25 L 70,25 L 70,35 L 75,35 L 75,50 L 65,50 L 65,75 L 35,75 L 35,50 L 25,50 L 25,35 L 30,35 z');
+            rookPath.setAttribute('fill', fillColor);
+            rookPath.setAttribute('stroke', strokeColor);
+            rookPath.setAttribute('stroke-width', '2');
+            g.appendChild(rookPath);
+            break;
+            
+          case 'knight':
+            // Simple knight shape
+            const knightPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            knightPath.setAttribute('d', 'M 30,25 C 35,25 40,20 45,20 C 60,20 60,35 60,35 C 60,40 55,45 55,45 L 75,65 L 75,75 L 30,75 C 30,75 30,55 30,55 C 30,55 20,45 20,35 C 20,25 25,25 30,25 z');
+            knightPath.setAttribute('fill', fillColor);
+            knightPath.setAttribute('stroke', strokeColor);
+            knightPath.setAttribute('stroke-width', '2');
+            g.appendChild(knightPath);
+            break;
+            
+          case 'bishop':
+            // Simple bishop shape
+            const bishopPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            bishopPath.setAttribute('d', 'M 50,20 C 40,20 40,35 40,35 C 40,40 45,45 45,45 L 35,65 L 65,65 L 55,45 C 55,45 60,40 60,35 C 60,35 60,20 50,20 z M 35,70 L 35,75 L 65,75 L 65,70 z');
+            bishopPath.setAttribute('fill', fillColor);
+            bishopPath.setAttribute('stroke', strokeColor);
+            bishopPath.setAttribute('stroke-width', '2');
+            g.appendChild(bishopPath);
+            break;
+            
+          case 'queen':
+            // Simple queen shape
+            const queenPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            queenPath.setAttribute('d', 'M 30,30 L 40,50 L 50,30 L 60,50 L 70,30 L 75,55 L 65,65 L 35,65 L 25,55 z M 35,70 L 35,75 L 65,75 L 65,70 z');
+            queenPath.setAttribute('fill', fillColor);
+            queenPath.setAttribute('stroke', strokeColor);
+            queenPath.setAttribute('stroke-width', '2');
+            g.appendChild(queenPath);
+            break;
+            
+          case 'king':
+            // Simple king shape
+            const kingPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            kingPath.setAttribute('d', 'M 50,15 L 50,25 L 40,25 L 40,35 L 50,35 L 50,45 L 60,45 L 60,35 L 70,35 L 70,25 L 60,25 L 60,15 z M 30,50 L 30,65 L 70,65 L 70,50 z M 35,70 L 35,75 L 65,75 L 65,70 z');
+            kingPath.setAttribute('fill', fillColor);
+            kingPath.setAttribute('stroke', strokeColor);
+            kingPath.setAttribute('stroke-width', '2');
+            g.appendChild(kingPath);
+            break;
+        }
+        
+        // Add the group to the SVG
+        svg.appendChild(g);
       }
     }
     

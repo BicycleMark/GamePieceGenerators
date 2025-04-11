@@ -341,4 +341,310 @@ document.addEventListener('DOMContentLoaded', function() {
         checkerCrownElement.textContent = crownColorName;
       }
     }, 3200);
-  });
+    
+    // Create the dice preview
+    const dicePreview = document.getElementById('dice-preview');
+    
+    if (dicePreview) {
+      // Create 3D dice
+      const createDie = (color, material, pipStyle = 'dots') => {
+        const dieContainer = document.createElement('div');
+        dieContainer.style.width = '80px';
+        dieContainer.style.height = '80px';
+        dieContainer.style.position = 'relative';
+        dieContainer.style.transformStyle = 'preserve-3d';
+        dieContainer.style.transform = 'rotateX(30deg) rotateY(40deg)';
+        dieContainer.style.animation = 'rotate-die 8s infinite linear';
+        
+        // Create the six faces of the die
+        const faces = ['front', 'back', 'right', 'left', 'top', 'bottom'];
+        const faceValues = [1, 6, 3, 4, 2, 5]; // Standard dice configuration
+        
+        faces.forEach((face, index) => {
+          const faceElement = document.createElement('div');
+          faceElement.style.position = 'absolute';
+          faceElement.style.width = '100%';
+          faceElement.style.height = '100%';
+          faceElement.style.border = '2px solid #CCCCCC';
+          faceElement.style.borderRadius = '10px';
+          faceElement.style.display = 'flex';
+          faceElement.style.justifyContent = 'center';
+          faceElement.style.alignItems = 'center';
+          faceElement.style.backfaceVisibility = 'hidden';
+          
+          // Set material appearance
+          if (material === 'plastic') {
+            faceElement.style.backgroundColor = color;
+            faceElement.style.boxShadow = 'inset 0 0 20px rgba(0, 0, 0, 0.1)';
+          } else if (material === 'metal') {
+            faceElement.style.background = `linear-gradient(135deg, ${color}, #CCCCCC)`;
+            faceElement.style.boxShadow = 'inset 0 0 10px rgba(255, 255, 255, 0.5)';
+          } else if (material === 'wood') {
+            faceElement.style.backgroundColor = color;
+            faceElement.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.05\' numOctaves=\'2\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noise)\' opacity=\'0.2\'/%3E%3C/svg%3E")';
+          } else if (material === 'marble') {
+            faceElement.style.background = `linear-gradient(135deg, ${color}, #FFFFFF, ${color})`;
+            faceElement.style.backgroundSize = '200% 200%';
+            faceElement.style.boxShadow = 'inset 0 0 15px rgba(255, 255, 255, 0.8)';
+          } else if (material === 'glass') {
+            faceElement.style.backgroundColor = color;
+            faceElement.style.opacity = '0.8';
+            faceElement.style.boxShadow = 'inset 0 0 30px rgba(255, 255, 255, 0.6)';
+          }
+          
+          // Position the face
+          switch (face) {
+            case 'front':
+              faceElement.style.transform = 'translateZ(40px)';
+              break;
+            case 'back':
+              faceElement.style.transform = 'rotateY(180deg) translateZ(40px)';
+              break;
+            case 'right':
+              faceElement.style.transform = 'rotateY(90deg) translateZ(40px)';
+              break;
+            case 'left':
+              faceElement.style.transform = 'rotateY(-90deg) translateZ(40px)';
+              break;
+            case 'top':
+              faceElement.style.transform = 'rotateX(90deg) translateZ(40px)';
+              break;
+            case 'bottom':
+              faceElement.style.transform = 'rotateX(-90deg) translateZ(40px)';
+              break;
+          }
+          
+          // Add pips based on face value
+          const value = faceValues[index];
+          
+          // Create pips container
+          const pipsContainer = document.createElement('div');
+          pipsContainer.style.position = 'relative';
+          pipsContainer.style.width = '80%';
+          pipsContainer.style.height = '80%';
+          
+          if (pipStyle === 'dots') {
+            // Add pips based on value
+            for (let i = 0; i < value; i++) {
+              const pip = document.createElement('div');
+              pip.style.position = 'absolute';
+              pip.style.width = '12px';
+              pip.style.height = '12px';
+              pip.style.borderRadius = '50%';
+              pip.style.backgroundColor = '#000000';
+              
+              // Position pips based on value
+              switch (value) {
+                case 1:
+                  pip.style.top = '50%';
+                  pip.style.left = '50%';
+                  pip.style.transform = 'translate(-50%, -50%)';
+                  break;
+                case 2:
+                  if (i === 0) {
+                    pip.style.top = '25%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else {
+                    pip.style.top = '75%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  }
+                  break;
+                case 3:
+                  if (i === 0) {
+                    pip.style.top = '25%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 1) {
+                    pip.style.top = '50%';
+                    pip.style.left = '50%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else {
+                    pip.style.top = '75%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  }
+                  break;
+                case 4:
+                  if (i === 0) {
+                    pip.style.top = '25%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 1) {
+                    pip.style.top = '25%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 2) {
+                    pip.style.top = '75%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else {
+                    pip.style.top = '75%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  }
+                  break;
+                case 5:
+                  if (i === 0) {
+                    pip.style.top = '25%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 1) {
+                    pip.style.top = '25%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 2) {
+                    pip.style.top = '50%';
+                    pip.style.left = '50%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 3) {
+                    pip.style.top = '75%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else {
+                    pip.style.top = '75%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  }
+                  break;
+                case 6:
+                  if (i === 0) {
+                    pip.style.top = '25%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 1) {
+                    pip.style.top = '25%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 2) {
+                    pip.style.top = '50%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 3) {
+                    pip.style.top = '50%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else if (i === 4) {
+                    pip.style.top = '75%';
+                    pip.style.left = '25%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  } else {
+                    pip.style.top = '75%';
+                    pip.style.left = '75%';
+                    pip.style.transform = 'translate(-50%, -50%)';
+                  }
+                  break;
+              }
+              
+              pipsContainer.appendChild(pip);
+            }
+          } else if (pipStyle === 'numbers') {
+            // Use numbers instead of dots
+            const numberElement = document.createElement('div');
+            numberElement.style.position = 'absolute';
+            numberElement.style.top = '50%';
+            numberElement.style.left = '50%';
+            numberElement.style.transform = 'translate(-50%, -50%)';
+            numberElement.style.fontSize = '30px';
+            numberElement.style.fontWeight = 'bold';
+            numberElement.style.color = '#000000';
+            numberElement.textContent = value.toString();
+            
+            pipsContainer.appendChild(numberElement);
+          } else if (pipStyle === 'symbols') {
+            // Use symbols instead of dots
+            const symbolElement = document.createElement('div');
+            symbolElement.style.position = 'absolute';
+            symbolElement.style.top = '50%';
+            symbolElement.style.left = '50%';
+            symbolElement.style.transform = 'translate(-50%, -50%)';
+            symbolElement.style.fontSize = '30px';
+            symbolElement.style.color = '#000000';
+            
+            // Different symbols for each value
+            const symbols = ['★', '♦', '♣', '♥', '♠', '⚅'];
+            symbolElement.textContent = symbols[value - 1];
+            
+            pipsContainer.appendChild(symbolElement);
+          }
+          
+          faceElement.appendChild(pipsContainer);
+          dieContainer.appendChild(faceElement);
+        });
+        
+        return dieContainer;
+      };
+      
+      // Add dice to the preview
+      dicePreview.appendChild(createDie('#FFFFFF', 'plastic', 'dots'));
+      dicePreview.appendChild(createDie('#E74C3C', 'metal', 'numbers'));
+      
+      // Cycle through dice colors
+      let diceColorIndex = 0;
+      const diceColors = ['#FFFFFF', '#E74C3C', '#3498DB', '#2ECC71', '#F1C40F'];
+      const diceColorNames = ['#FFFFFF', '#E74C3C', '#3498DB', '#2ECC71', '#F1C40F'];
+      
+      setInterval(() => {
+        diceColorIndex = (diceColorIndex + 1) % diceColors.length;
+        
+        if (dicePreview) {
+          const firstDie = dicePreview.querySelector('div:first-child');
+          
+          if (firstDie) {
+            const faces = firstDie.querySelectorAll('div');
+            
+            faces.forEach(face => {
+              if (face.style.backgroundColor) {
+                face.style.backgroundColor = diceColors[diceColorIndex];
+              }
+            });
+          }
+        }
+        
+        const diceColorElement = document.getElementById('dice-color');
+        if (diceColorElement) {
+          diceColorElement.textContent = diceColorNames[diceColorIndex];
+        }
+      }, 2600);
+      
+      // Cycle through dice materials
+      let diceMaterialIndex = 0;
+      const diceMaterials = ['plastic', 'metal', 'wood', 'marble', 'glass'];
+      const diceMaterialNames = ['Plastic', 'Metal', 'Wood', 'Marble', 'Glass'];
+      
+      setInterval(() => {
+        diceMaterialIndex = (diceMaterialIndex + 1) % diceMaterials.length;
+        
+        const diceMaterialElement = document.getElementById('dice-material');
+        if (diceMaterialElement) {
+          diceMaterialElement.textContent = diceMaterialNames[diceMaterialIndex];
+        }
+      }, 3300);
+      
+      // Cycle through pip styles
+      let pipStyleIndex = 0;
+      const pipStyles = ['dots', 'numbers', 'symbols'];
+      const pipStyleNames = ['Dots', 'Numbers', 'Symbols'];
+      
+      setInterval(() => {
+        pipStyleIndex = (pipStyleIndex + 1) % pipStyles.length;
+        
+        // Update the second die to show different pip styles
+        if (dicePreview && dicePreview.children.length > 1) {
+          const secondDie = dicePreview.children[1];
+          
+          // Remove the old die
+          dicePreview.removeChild(secondDie);
+          
+          // Add a new die with the current pip style
+          dicePreview.appendChild(createDie('#E74C3C', 'metal', pipStyles[pipStyleIndex]));
+        }
+        
+        const pipStyleElement = document.getElementById('dice-pip-style');
+        if (pipStyleElement) {
+          pipStyleElement.textContent = pipStyleNames[pipStyleIndex];
+        }
+      }, 3000);
+    }
+});

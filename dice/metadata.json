@@ -1,0 +1,19 @@
+{
+  "name": "Dice Generator",
+  "version": "1.0.0",
+  "description": "Create customizable 3D dice with animations",
+  "author": "GamePieceGenerators",
+  "license": "MIT",
+  "features": [
+    "3D dice rendering with Three.js",
+    "Physics-based animations",
+    "Customizable colors and materials",
+    "Multiple dice types (d6)",
+    "Export as SVG, PNG, or animated GIF"
+  ],
+  "dependencies": {
+    "three.js": "^0.150.0",
+    "cannon.js": "^0.6.2",
+    "gif.js": "^0.2.0"
+  }
+}

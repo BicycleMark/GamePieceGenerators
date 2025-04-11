@@ -1,0 +1,41 @@
+{
+  "dice": {
+    "d6": {
+      "size": 100,
+      "color": "#FFFFFF",
+      "material": "plastic",
+      "pipColor": "#000000",
+      "pipStyle": "dots",
+      "borderWidth": 2,
+      "borderColor": "#CCCCCC",
+      "roundness": 10,
+      "texture": "smooth"
+    }
+  },
+  "animation": {
+    "speed": 1.0,
+    "friction": 0.8,
+    "gravity": 9.8,
+    "bounciness": 0.7,
+    "spinTime": 2000,
+    "rollTime": 3000
+  },
+  "camera": {
+    "angle": 45,
+    "distance": 300,
+    "autoRotate": false
+  },
+  "lighting": {
+    "ambient": "#FFFFFF",
+    "directional": "#FFFFFF",
+    "intensity": 0.8,
+    "shadows": true
+  },
+  "export": {
+    "format": "png",
+    "quality": 0.9,
+    "transparent": true,
+    "animationFrames": 24,
+    "animationLoop": true
+  }
+}

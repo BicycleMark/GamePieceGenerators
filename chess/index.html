@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/svg+xml">
+  <title>Chess Piece Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    .board-link {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .board-link a {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .board-link a:hover {
+      background-color: #45a049;
+    }
+    
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .control-group {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .control-group h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .control-item {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    .preview {
+      text-align: center;
+      margin: 30px 0;
+      padding: 20px;
+      background: #f0f0f0;
+      border-radius: 10px;
+    }
+    
+    .preview-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+    
+    .export-options {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    
+    .export-options h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    button {
+      padding: 10px 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      background: #45a049;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 5px;
+    }
+    
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    
+    input[type="radio"] {
+      margin: 0;
+    }
+    
+    /* Settings Management Styles */
+    .settings-management {
+      margin-top: 20px;
+    }
+    
+    .settings-info {
+      margin-bottom: 15px;
+      font-size: 0.9em;
+    }
+    
+    .status-message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      transition: opacity 0.5s ease;
+    }
+    
+    .status-info {
+      background-color: #e3f2fd;
+      border-left: 4px solid #2196F3;
+    }
+    
+    .status-success {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .status-warning {
+      background-color: #fff8e1;
+      border-left: 4px solid #FFC107;
+    }
+    
+    .status-error {
+      background-color: #ffebee;
+      border-left: 4px solid #F44336;
+    }
+    
+    .button-like {
+      display: inline-block;
+      padding: 10px 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .button-like:hover {
+      background: #45a049;
+    }
+    
+    .piece-img {
+      max-width: 150px;
+      max-height: 150px;
+      display: none;
+    }
+    
+    .piece-img.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chess Piece Generator</h1>
+  
+  <div class="board-link">
+    <a href="board.html" target="_blank">View Complete Chess Board</a>
+  </div>
+  
+  <div style="text-align: center; margin-bottom: 20px; display: flex; gap: 10px; justify-content: center;">
+    <div style="background-color: #333; padding: 10px; border-radius: 5px;">
+      <a href="../index.html" style="color: white; text-decoration: none; font-weight: bold; font-size: 1.1em;">Back to Home</a>
+    </div>
+  </div>
+  
+  <div class="preview">
+    <h2>Piece Preview</h2>
+    <div class="preview-container" id="piece-preview">
+      <!-- Dark Theme Pieces (white pieces on dark background) -->
+      <img src="samples/white-theme/bishop.svg" class="piece-img dark bishop active" alt="Dark Bishop">
+      <img src="samples/white-theme/king.svg" class="piece-img dark king" alt="Dark King">
+      <img src="samples/white-theme/knight.svg" class="piece-img dark knight" alt="Dark Knight">
+      <img src="samples/white-theme/pawn.svg" class="piece-img dark pawn" alt="Dark Pawn">
+      <img src="samples/white-theme/queen.svg" class="piece-img dark queen" alt="Dark Queen">
+      <img src="samples/white-theme/rook.svg" class="piece-img dark rook" alt="Dark Rook">
+      
+      <!-- Light Theme Pieces (dark pieces on light background) -->
+      <img src="samples/dark-theme/bishop.svg" class="piece-img light bishop" alt="Light Bishop">
+      <img src="samples/dark-theme/king.svg" class="piece-img light king" alt="Light King">
+      <img src="samples/dark-theme/knight.svg" class="piece-img light knight" alt="Light Knight">
+      <img src="samples/dark-theme/pawn.svg" class="piece-img light pawn" alt="Light Pawn">
+      <img src="samples/dark-theme/queen.svg" class="piece-img light queen" alt="Light Queen">
+      <img src="samples/dark-theme/rook.svg" class="piece-img light rook" alt="Light Rook">
+    </div>
+  </div>
+  
+  <div class="controls">
+    <div class="control-group">
+      <h2>PIECE SETTINGS</h2>
+      
+      <div class="control-item">
+        <label for="piece-type">Select Piece Type:</label>
+        <select id="piece-type">
+          <option value="king">King</option>
+          <option value="queen">Queen</option>
+          <option value="rook">Rook</option>
+          <option value="bishop" selected>Bishop</option>
+          <option value="knight">Knight</option>
+          <option value="pawn">Pawn</option>
+        </select>
+      </div>
+      
+      <div class="control-item">
+        <label>Theme:</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="theme" value="light"> Light
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="theme" value="dark" checked> Dark
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <h2>DISPLAY SETTINGS</h2>
+      
+      <div class="control-item">
+        <label for="piece-size">Piece Size:</label>
+        <select id="piece-size">
+          <option value="100">100 × 100 px</option>
+          <option value="150" selected>150 × 150 px</option>
+          <option value="200">200 × 200 px</option>
+          <option value="300">300 × 300 px</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <div class="export-options">
+    <h2>EXPORT OPTIONS</h2>
+    
+    <div class="control-item">
+      <label>Output Format:</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="output-format" value="svg" checked> SVG
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="output-format" value="png"> PNG
+        </label>
+      </div>
+    </div>
+    
+    <div class="button-group">
+      <button id="save-button">Save Current Piece</button>
+      <button id="save-all-button">Save All Pieces</button>
+      <button id="copy-button">Copy SVG</button>
+    </div>
+  </div>
+  
+  <div class="control-group settings-management">
+    <h2>SETTINGS MANAGEMENT</h2>
+    
+    <div class="settings-info">
+      <p>Current settings source: <span id="settings-source">hardcoded defaults</span></p>
+    </div>
+    
+    <div class="button-group">
+      <button id="save-settings-button">Save Settings</button>
+      <input type="file" id="load-settings-input" accept=".json" style="display: none;">
+      <label for="load-settings-input" class="button-like">Load Settings</label>
+      <button id="create-defaults-button">Create Defaults</button>
+    </div>
+    
+    <div id="settings-status" class="status-message" style="display: none;"></div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get elements
+      const pieceTypeSelect = document.getElementById('piece-type');
+      const themeRadios = document.querySelectorAll('input[name="theme"]');
+      const sizeSelect = document.getElementById('piece-size');
+      const saveButton = document.getElementById('save-button');
+      const saveAllButton = document.getElementById('save-all-button');
+      const copyButton = document.getElementById('copy-button');
+      const formatRadios = document.querySelectorAll('input[name="output-format"]');
+      const saveSettingsButton = document.getElementById('save-settings-button');
+      const loadSettingsInput = document.getElementById('load-settings-input');
+      const createDefaultsButton = document.getElementById('create-defaults-button');
+      const statusElement = document.getElementById('settings-status');
+      const settingsSourceElement = document.getElementById('settings-source');
+      
+      // Settings
+      const storageKey = 'chess-settings';
+      const defaultSettings = {
+        pieceType: 'bishop',
+        theme: 'dark',
+        pieceSize: 150,
+        exportScale: 2,
+        exportFormat: 'svg',
+        version: '1.0.0'
+      };
+      
+      let settings = loadSettings();
+      
+      // Apply initial settings
+      applySettings();
+      
+      // Add event listeners
+      pieceTypeSelect.addEventListener('change', (e) => {
+        settings.pieceType = e.target.value;
+        saveSettings();
+        updatePieceDisplay();
+      });
+      
+      themeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            settings.theme = e.target.value;
+            saveSettings();
+            updatePieceDisplay();
+          }
+        });
+      });
+      
+      sizeSelect.addEventListener('change', (e) => {
+        settings.pieceSize = parseInt(e.target.value);
+        saveSettings();
+        updatePieceSize();
+      });
+      
+      formatRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            settings.exportFormat = e.target.value;
+            saveSettings();
+          }
+        });
+      });
+      
+      saveButton.addEventListener('click', savePiece);
+      saveAllButton.addEventListener('click', saveAllPieces);
+      copyButton.addEventListener('click', copySVG);
+      saveSettingsButton.addEventListener('click', () => {
+        const success = saveSettings();
+        if (success) {
+          showStatus('Settings saved successfully!', 'success');
+          settingsSourceElement.textContent = 'localStorage';
+        } else {
+          showStatus('Error saving settings', 'error');
+        }
+      });
+      
+      loadSettingsInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const json = e.target.result;
+          try {
+            const importedSettings = JSON.parse(json);
+            if (typeof importedSettings !== 'object' || importedSettings === null) {
+              throw new Error('Invalid settings format');
+            }
+            
+            settings = { ...defaultSettings, ...importedSettings };
+            saveSettings();
+            applySettings();
+            showStatus('Settings loaded successfully!', 'success');
+          } catch (error) {
+            console.error('Error importing settings:', error);
+            showStatus('Error loading settings: Invalid format', 'error');
+          }
+        };
+        
+        reader.readAsText(file);
+      });
+      
+      createDefaultsButton.addEventListener('click', () => {
+        const json = JSON.stringify(settings, null, 2);
+        
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'defaults.json';
+        a.click();
+        
+        URL.revokeObjectURL(url);
+        
+        showStatus('Defaults file created!', 'success');
+      });
+      
+      // Functions
+      function loadSettings() {
+        try {
+          const savedSettings = localStorage.getItem(storageKey);
+          if (savedSettings) {
+            const parsedSettings = JSON.parse(savedSettings);
+            return { ...defaultSettings, ...parsedSettings };
+          }
+        } catch (error) {
+          console.error('Error loading settings:', error);
+        }
+        
+        return { ...defaultSettings };
+      }
+      
+      function saveSettings() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(settings));
+          return true;
+        } catch (error) {
+          console.error('Error saving settings:', error);
+          return false;
+        }
+      }
+      
+      function applySettings() {
+        // Update form controls
+        pieceTypeSelect.value = settings.pieceType;
+        
+        themeRadios.forEach(radio => {
+          radio.checked = radio.value === settings.theme;
+        });
+        
+        sizeSelect.value = settings.pieceSize;
+        
+        formatRadios.forEach(radio => {
+          radio.checked = radio.value === settings.exportFormat;
+        });
+        
+        // Update settings source display
+        settingsSourceElement.textContent = localStorage.getItem(storageKey) ? 
+          'localStorage' : 'hardcoded defaults';
+        
+        // Update piece display
+        updatePieceDisplay();
+        updatePieceSize();
+      }
+      
+      function updatePieceDisplay() {
+        // Hide all pieces
+        document.querySelectorAll('.piece-img').forEach(img => {
+          img.classList.remove('active');
+        });
+        
+        // Show the selected piece
+        const selectedPiece = document.querySelector(`.piece-img.${settings.theme}.${settings.pieceType}`);
+        if (selectedPiece) {
+          selectedPiece.classList.add('active');
+        }
+      }
+      
+      function updatePieceSize() {
+        document.querySelectorAll('.piece-img').forEach(img => {
+          img.style.maxWidth = `${settings.pieceSize}px`;
+          img.style.maxHeight = `${settings.pieceSize}px`;
+        });
+      }
+      
+      function savePiece() {
+        const format = settings.exportFormat;
+        const pieceType = settings.pieceType;
+        const theme = settings.theme;
+        
+        // Get the selected piece
+        const selectedPiece = document.querySelector(`.piece-img.${theme}.${pieceType}`);
+        if (!selectedPiece) return;
+        
+        if (format === 'svg') {
+          // Export as SVG
+          fetch(selectedPiece.src)
+            .then(response => response.text())
+            .then(svgText => {
+              const blob = new Blob([svgText], { type: 'image/svg+xml' });
+              const url = URL.createObjectURL(blob);
+              
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `chess_${pieceType}_${theme}.svg`;
+              a.click();
+              
+              URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Error exporting SVG:', error);
+              showStatus('Error exporting SVG: ' + error.message, 'error');
+            });
+        } else {
+          // Export as PNG
+          const canvas = document.createElement('canvas');
+          const scale = settings.exportScale || 2;
+          canvas.width = settings.pieceSize * scale;
+          canvas.height = settings.pieceSize * scale;
+          
+          const ctx = canvas.getContext('2d');
+          
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/png');
+            
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = `chess_${pieceType}_${theme}.png`;
+            a.click();
+          };
+          
+          img.onerror = () => {
+            console.error('Error loading image for PNG export');
+            showStatus('Error exporting PNG', 'error');
+          };
+          
+          img.src = selectedPiece.src;
+        }
+      }
+      
+      async function saveAllPieces() {
+        const format = settings.exportFormat;
+        const theme = settings.theme;
+        
+        // Check if JSZip is available
+        if (typeof JSZip === 'undefined') {
+          showStatus('JSZip library is not loaded. Cannot create ZIP file.', 'error');
+          return;
+        }
+        
+        // Create a new ZIP file
+        const zip = new JSZip();
+        const pieceTypes = ['king', 'queen', 'rook', 'bishop', 'knight', 'pawn'];
+        
+        try {
+          // Add each piece to the ZIP
+          for (const pieceType of pieceTypes) {
+            const pieceImg = document.querySelector(`.piece-img.${theme}.${pieceType}`);
+            if (!pieceImg) continue;
+            
+            if (format === 'svg') {
+              // Add SVG to ZIP
+              const response = await fetch(pieceImg.src);
+              const svgText = await response.text();
+              zip.file(`chess_${pieceType}_${theme}.svg`, svgText);
+            } else {
+              // Add PNG to ZIP
+              await new Promise(resolve => {
+                const canvas = document.createElement('canvas');
+                const scale = settings.exportScale || 2;
+                canvas.width = settings.pieceSize * scale;
+                canvas.height = settings.pieceSize * scale;
+                
+                const ctx = canvas.getContext('2d');
+                
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                
+                img.onload = () => {
+                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                  const dataUrl = canvas.toDataURL('image/png');
+                  
+                  // Convert data URL to blob
+                  const byteString = atob(dataUrl.split(',')[1]);
+                  const mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+                  const ab = new ArrayBuffer(byteString.length);
+                  const ia = new Uint8Array(ab);
+                  
+                  for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                  }
+                  
+                  const blob = new Blob([ab], { type: mimeType });
+                  zip.file(`chess_${pieceType}_${theme}.png`, blob);
+                  resolve();
+                };
+                
+                img.onerror = () => {
+                  console.error('Error loading image for PNG export');
+                  resolve();
+                };
+                
+                img.src = pieceImg.src;
+              });
+            }
+          }
+          
+          // Generate the ZIP file
+          const content = await zip.generateAsync({ type: 'blob' });
+          
+          // Create a download link
+          const url = URL.createObjectURL(content);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `chess_pieces_${theme}.zip`;
+          a.click();
+          
+          URL.revokeObjectURL(url);
+          
+          showStatus('All pieces exported successfully!', 'success');
+        } catch (error) {
+          console.error('Error exporting pieces:', error);
+          showStatus('Error exporting pieces: ' + error.message, 'error');
+        }
+      }
+      
+      function copySVG() {
+        const pieceType = settings.pieceType;
+        const theme = settings.theme;
+        
+        // Get the selected piece
+        const selectedPiece = document.querySelector(`.piece-img.${theme}.${pieceType}`);
+        if (!selectedPiece) return;
+        
+        fetch(selectedPiece.src)
+          .then(response => response.text())
+          .then(svgText => {
+            // Copy to clipboard
+            return navigator.clipboard.writeText(svgText);
+          })
+          .then(() => {
+            showStatus('SVG copied to clipboard!', 'success');
+          })
+          .catch(err => {
+            console.error('Error copying to clipboard:', err);
+            showStatus('Error copying to clipboard', 'error');
+          });
+      }
+      
+      function showStatus(message, type = 'info') {
+        if (!statusElement) return;
+        
+        statusElement.textContent = message;
+        statusElement.className = 'status-message';
+        statusElement.classList.add(`status-${type}`);
+        statusElement.style.display = 'block';
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+          statusElement.style.opacity = '0';
+          setTimeout(() => {
+            statusElement.style.display = 'none';
+            statusElement.style.opacity = '1';
+          }, 500);
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>

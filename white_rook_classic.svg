@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="120" height="120" viewBox="0 0 100 100">
+  <!-- White Rook Classic -->
+  <!-- Tags: white, rook, classic, outline, simple -->
+  <!-- This file was created with actual chess piece graphics -->
+    <path d="M35,25 L35,35 L40,35 L40,30 L45,30 L45,35 L55,35 L55,30 L60,30 L60,35 L65,35 L65,25 L35,25 Z M35,40 L35,75 L65,75 L65,40 L35,40 Z" fill="#FFFFFF" stroke="#000000" stroke-width="2" />
+
+</svg>

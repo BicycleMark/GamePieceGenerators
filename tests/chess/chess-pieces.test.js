@@ -2,7 +2,7 @@
  * Tests for Chess Pieces Generator
  */
 
-const { ChessPiece, ChessBoard } = require('../../chesspieces/js/chess-pieces');
+const { ChessPiece, ChessBoard } = require('../../chess/js/chess-pieces');
 
 // Mock document and SVG elements
 const setupMocks = () => {
@@ -87,6 +87,7 @@ describe('ChessPiece', () => {
     mockSvgElement = mocks.mockSvgElement;
     
     // Create a new chess piece for each test
+    const { ChessPiece } = require('../../chess/js/chess-pieces');
     chessPiece = new ChessPiece(mockSvgElement);
   });
   
@@ -116,6 +117,7 @@ describe('ChessPiece', () => {
       style: 'modern'
     };
     
+    const { ChessPiece } = require('../../chess/js/chess-pieces');
     chessPiece = new ChessPiece(mockSvgElement, customOptions);
     
     // Check that SVG element attributes were set with custom values

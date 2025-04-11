@@ -2,6 +2,8 @@
  * UI Controls for the Chess Piece Generator
  * Handles the user interface for customizing chess pieces
  */
+const SettingsManager = require('./settings-manager');
+const { ChessPiece } = require('./chess-pieces');
 class UIControls {
   /**
    * Constructor for the UIControls class

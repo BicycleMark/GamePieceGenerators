@@ -2,11 +2,11 @@
  * Tests for Chess Pieces UI Controls
  */
 
-const UIControls = require('../../chesspieces/js/ui-controls');
-const { ChessPiece, ChessBoard } = require('../../chesspieces/js/chess-pieces');
+const UIControls = require('../../chess/js/ui-controls');
+const { ChessPiece, ChessBoard } = require('../../chess/js/chess-pieces');
 
 // Mock JSZip
-jest.mock('../../chesspieces/js/jszip.min.js', () => {
+jest.mock('../../chess/js/jszip.min.js', () => {
   return jest.fn().mockImplementation(() => {
     return {
       file: jest.fn(),

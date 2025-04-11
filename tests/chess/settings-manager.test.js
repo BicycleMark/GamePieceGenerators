@@ -2,7 +2,7 @@
  * Tests for Chess Pieces Generator Settings Manager
  */
 
-const SettingsManager = require('../../chesspieces/js/settings-manager');
+const SettingsManager = require('../../chess/js/settings-manager');
 
 describe('Chess Pieces Settings Manager', () => {
   let settingsManager;
